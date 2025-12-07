@@ -1,0 +1,23 @@
+# Generic ignores
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+.env*
+*.log
+
+# PowerShell ignores
+*.psd1
+*.psm1
+*.ps1xml
+*.psc1
+*.pssc
+*.pdb
+
+# Docusaurus/MDX ignores
+build/
+.docusaurus/
+node_modules/
+dist/

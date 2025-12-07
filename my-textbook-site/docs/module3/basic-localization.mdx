@@ -1,0 +1,39 @@
+// my-textbook-site/docs/module3/basic-localization.mdx
+
+import LocalizationDemo from '@site/src/components/LocalizationDemo';
+
+# Basic Localization in Humanoid Robots
+
+## Introduction
+
+Localization is a fundamental capability for any autonomous robot, including humanoids. It refers to the robot's ability to determine its own position and orientation within its environment. Without accurate localization, a robot cannot effectively navigate, interact with objects, or perform complex tasks.
+
+In humanoid robotics, localization is particularly challenging due to complex motion dynamics, sensor limitations, and often unstructured environments. This module introduces the basic principles behind robot localization.
+
+## The Localization Problem
+
+The localization problem can be stated as:
+
+> Given a map of the environment and a stream of sensor measurements, determine the robot's pose (position and orientation) within that map.
+
+Often, even without a complete map, robots can perform a form of relative localization (odometry) by integrating their motion over time.
+
+## Interactive Demonstration: 2D Odometry-Based Localization
+
+Below is an interactive demonstration of a simplified 2D robot using odometry-based localization. You can control the robot's linear and angular velocities. The blue triangle represents the robot, and its estimated path is updated based on motion and simulated sensor data.
+
+<LocalizationDemo />
+
+**Note**: This demo uses a simplified odometry model and simulated sensor data. Real-world localization algorithms are much more complex, incorporating advanced filtering techniques (like Kalman filters or particle filters) and often using external sensor data (e.g., from cameras, LiDAR) to correct for odometry drift.
+
+## Key Concepts
+
+*   **Pose**: The position and orientation of the robot in space.
+*   **Odometry**: Estimating a robot's pose by integrating its motion over time, typically from wheel encoders or IMUs.
+*   **Sensor Fusion**: Combining data from multiple sensors to get a more accurate and robust estimate of the robot's state.
+*   **Drift**: The accumulation of errors over time in odometry, leading to increasing inaccuracies in pose estimation.
+*   **Global vs. Local Localization**: Determining position relative to a global map versus relative to a starting point.
+
+## Next Steps
+
+Having understood basic localization, we will proceed to explore more advanced perception algorithms, including mapping and object recognition, and how sensor data can be fused to achieve more robust environmental understanding.

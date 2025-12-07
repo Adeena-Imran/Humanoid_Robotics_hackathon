@@ -1,0 +1,62 @@
+// my-textbook-site/docs/module4/actuator-types.mdx
+
+import ActuatorTypesDemo from '@site/src/components/ActuatorTypesDemo';
+
+# Actuator Types in Humanoid Robots
+
+## Introduction
+
+Actuators are the "muscles" of a humanoid robot, responsible for generating the motion needed to perform tasks. They convert energy (electrical, hydraulic, pneumatic) into mechanical force or torque. The choice of actuator significantly impacts a robot's performance, efficiency, and overall design.
+
+Understanding the different types of actuators, their working principles, and their respective advantages and limitations is crucial for designing and controlling humanoid robots effectively.
+
+## Common Actuator Types
+
+### 1. Electric Motors
+Electric motors are the most common type of actuator in humanoid robots due to their high efficiency, precise control, and relatively low maintenance.
+
+#### a. DC Motors (Direct Current Motors)
+*   **Principle**: Convert electrical energy into mechanical energy through the interaction of magnetic fields.
+*   **Advantages**: Simple control, good low-speed torque.
+*   **Limitations**: Brush wear (brushed DC), lower efficiency than BLDC in some cases.
+
+#### b. BLDC Motors (Brushless DC Motors)
+*   **Principle**: Similar to DC motors but without brushes, using electronic commutation.
+*   **Advantages**: High efficiency, high power density, long lifespan, precise control.
+*   **Limitations**: Requires more complex control electronics (ESC).
+
+#### c. Stepper Motors
+*   **Principle**: Rotate in discrete steps, offering precise position control without feedback.
+*   **Advantages**: Open-loop position control, holds position well.
+*   **Limitations**: Can lose steps under load, lower efficiency, prone to resonance.
+
+### 2. Hydraulic Actuators
+Hydraulic actuators use pressurized fluid to generate large forces or torques.
+
+*   **Principle**: Use incompressible fluid (oil) under pressure to transmit force.
+*   **Advantages**: Very high power density, can generate immense forces, very stiff.
+*   **Limitations**: Heavy, bulky, messy (leaks), requires external pump and reservoir.
+
+### 3. Pneumatic Actuators
+Pneumatic actuators use compressed air to generate linear or rotational motion.
+
+*   **Principle**: Use compressible fluid (air) under pressure to transmit force.
+*   **Advantages**: Clean, fast response, simple and inexpensive for certain applications.
+*   **Limitations**: Low stiffness, difficult for precise control, energy inefficient.
+
+### 4. Series Elastic Actuators (SEAs)
+SEAs incorporate an elastic element (spring) in series with a motor, often BLDC.
+
+*   **Principle**: Spring acts as a force sensor and mechanical filter.
+*   **Advantages**: High force fidelity, impact robustness, lower reflected inertia, energy storage.
+*   **Limitations**: Can be bulky, adds compliance which complicates control.
+
+## Interactive Actuator Explorer
+
+Use the interactive demo below to learn more about specific actuator types and their properties.
+
+<ActuatorTypesDemo />
+
+## Next Steps
+
+With a solid understanding of actuator types, we will next explore how these actuators are commanded and regulated by various control systems to achieve desired robot behaviors.

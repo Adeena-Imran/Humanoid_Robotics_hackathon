@@ -1,0 +1,44 @@
+// my-textbook-site/docs/module2/inverse-kinematics.mdx
+
+import InverseKinematicsDemo from '@site/src/components/InverseKinematicsDemo';
+
+# Inverse Kinematics of Humanoid Robots
+
+## Introduction
+
+Inverse kinematics (IK) is another critical concept in robotics, complementary to forward kinematics. While forward kinematics determines the end-effector pose from joint angles, inverse kinematics solves the opposite problem:
+
+> Given a desired position and orientation for the robot's end-effector, what are the corresponding joint angles (or positions) that would achieve this pose?
+
+IK is essential for making robots perform tasks where the desired end-effector position is known, such as grasping an object, walking, or interacting with a user at a specific point in space.
+
+## The Inverse Kinematics Problem
+
+The IK problem is often more complex than FK because:
+1.  **Multiple Solutions**: For a given end-effector pose, there might be several sets of joint angles that can achieve it.
+2.  **No Solution**: The desired pose might be physically unreachable by the robot (outside its workspace).
+3.  **Computational Complexity**: Solving IK can involve complex non-linear equations, often requiring iterative numerical methods.
+
+## Interactive Demonstration: 2-DOF Robotic Arm - Inverse Kinematics
+
+Below is an interactive demonstration of a simple 2-Degree-of-Freedom (DOF) robotic arm attempting to reach a target. You can manipulate the target position (red sphere) using the sliders. The robot arm will try to adjust its joint angles to reach the target.
+
+Observe:
+*   How the robot's configuration changes to reach the target.
+*   When the target is unreachable, the robot's arm might not move, and the "Solution Status" will indicate "No Solution / Unreachable".
+*   (Note: This simplified demo does not explicitly show multiple solutions, but a real IK solver might find different arm configurations for the same target.)
+
+<InverseKinematicsDemo />
+
+**Note**: The inverse kinematics calculation in this demo is currently simplified and uses a placeholder solver. A full implementation involves advanced analytical or numerical methods to find precise joint configurations, considering joint limits and potential singularities.
+
+## Key Concepts
+
+*   **Workspace**: The set of all points in space that the robot's end-effector can reach.
+*   **Redundancy**: Having more degrees of freedom than strictly necessary to achieve a task, leading to multiple IK solutions.
+*   **Kinematic Singularities**: Configurations where the robot loses one or more degrees of freedom, making certain movements impossible or requiring very large joint velocities.
+*   **Analytical vs. Numerical IK**: Different approaches to solving IK equations.
+
+## Next Steps
+
+With a foundational understanding of both forward and inverse kinematics, we can now begin to explore more advanced topics such as trajectory generation, motion planning, and dynamic control of humanoid robots.

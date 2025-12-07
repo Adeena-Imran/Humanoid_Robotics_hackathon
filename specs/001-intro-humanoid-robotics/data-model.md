@@ -1,0 +1,6 @@
+- **Humanoid Robot**: A robot with its body shape built to resemble the human body. Key attributes: bipedal locomotion, articulated limbs, sensory systems (vision, tactile), manipulation capabilities.
+- **Degrees of Freedom (DOF)**: The number of basic ways a rigid body can move through three-dimensional space.
+- **Actuators**: The motors responsible for motion in a robot's joints.
+- **Sensors**: Devices that measure physical properties of the environment and the robot's internal state (e.g., cameras, IMUs, encoders).
+- **Kinematics**: The study of motion without considering the forces that cause it. Includes forward and inverse kinematics.
+- **Dynamics**: The study of motion while considering the forces and torques that cause it.
