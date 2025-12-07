@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BACKEND_URL = 'http://localhost:4000/api/auth'; // TODO: Replace with environment variable for production
 
@@ -8,7 +8,15 @@ const AuthForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [token, setToken] = useState<string | null>(localStorage.getItem('jwt_token'));
+  const [token, setToken] = useState<string | null>(null); // Start with null
+
+  // Run only on client after first render to read localStorage safely
+  useEffect(() => {
+    const savedToken = localStorage.getItem('jwt_token');
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
