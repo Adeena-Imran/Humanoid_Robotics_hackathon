@@ -1,214 +1,317 @@
-# Module 1: Introduction to Humanoid Robotics
+---
+id: intro-humanoid-robotics
+title: "Module 1: The Dawn of Physical AI and Humanoid Robotics"
+---
 
-## 1.1 What Are Humanoid Robots?
+# Module 1: The Dawn of Physical AI and Humanoid Robotics
 
-A **humanoid robot** is a robot with its body shape built to resemble the human body. The design may be for functional purposes, such as interacting with human tools and environments, for experimental purposes, such as the study of bipedal locomotion, or for other purposes. In general, humanoid robots have a torso, a head, two arms, and two legs, though some forms of humanoid robots may model only part of the body, for example, from the waist up.
+## 1.1 Introduction: The Next Revolution
 
-### Key Characteristics
+Welcome to the beginning of your journey into one of the most exciting and rapidly advancing fields in technology: the world of **Physical AI and Humanoid Robotics**. For decades, science fiction has painted pictures of a future where intelligent, walking robots are a part of our daily lives. That future is no longer just a dream; it's being built in research labs and tech companies around the world, right now.
 
--   **Human-like Structure**: A body, head, arms, and legs.
--   **Bipedal Locomotion**: The ability to walk on two legs.
--   **Sensory Input**: Equipped with sensors for vision, hearing, and touch.
--   **Manipulation**: Capable of grasping and manipulating objects with hands.
--   **AI-Powered**: Controlled by an AI system for decision-making and interaction.
+This book is your guide to understanding this revolution. We will explore the two fundamental pillars that make it possible:
+1.  **Physical AI**: The "mind"—intelligent software that can perceive, learn from, and act within the physical world.
+2.  **Humanoid Robotics**: The "body"—the engineering marvel of creating machines in our own image, capable of navigating our world and using our tools.
 
-### Real-World Examples
+The convergence of these two fields is the driving force behind the next generation of robotics. In this introductory module, we will lay the foundational knowledge for your entire journey. We'll define what Physical AI and Humanoid Robotics are, explore their history and landmark achievements, and understand why their intersection is so powerful. Finally, we'll get our hands dirty by setting up your development environment and writing your very first lines of code to simulate a piece of our physical world.
 
--   **ASIMO** (Honda): One of the most famous humanoid robots, known for its advanced mobility.
--   **Atlas** (Boston Dynamics): A research platform designed for disaster response, known for its dynamic agility.
--   **Tesla Bot** (Tesla): A conceptual general-purpose humanoid robot designed to perform unsafe, repetitive, or boring tasks.
-
-### Difference Between Humanoid and Non-Humanoid Robots
-
-The primary difference lies in their morphology (body structure). While humanoid robots mimic the human form, non-humanoid robots are designed for specific tasks and can take many forms, such as robotic arms in factories, rovers for planetary exploration, or drones for aerial surveillance.
+Prepare to go from a curious beginner to a knowledgeable enthusiast, ready to understand and even contribute to the future of robotics.
 
 ---
 
-## 1.2 Why Humanoid Robotics Matters
+## 1.2 Part 1: The "Mind" - Understanding Physical AI
 
-Humanoid robotics is a rapidly growing field with the potential to impact many aspects of our lives.
+When we hear "Artificial Intelligence," we often think of chatbots, image generators, or algorithms running on massive servers in the cloud. Physical AI, however, is different. It's AI that gets its hands dirty.
 
-### Industrial Uses
+### What is Physical AI?
 
-In manufacturing and logistics, humanoid robots can work alongside humans, performing repetitive or physically demanding tasks in environments designed for people.
+**Physical AI**, or **Embodied Intelligence**, is a branch of artificial intelligence that is directly connected to the physical world through a body. Unlike a disembodied AI that only processes data, a Physical AI can:
+-   **Sense**: Perceive the environment through sensors like cameras (vision), microphones (hearing), and tactile sensors (touch).
+-   **Act**: Physically influence the environment using actuators like motors and grippers.
+-   **Learn**: Improve its performance and understanding through direct physical interaction and feedback.
 
-### Healthcare
+Think of the difference between a chess-playing AI and a robot that can physically move the chess pieces. The chess AI only needs to understand the rules and strategies of the game in a virtual space. The robot, however, needs to understand not only the game but also how to see the board, how to move its arm without knocking over other pieces, and how to grasp and release a piece securely. That is Physical AI in action.
 
-They can serve as caregivers for the elderly, assist with patient rehabilitation, or act as surgical assistants, providing precision and support to medical professionals.
+### The Sensorimotor Loop: The Core of Interaction
 
-### Home Assistants
+The fundamental process governing a Physical AI is the **sensorimotor loop**. It's the continuous cycle of "sense, think, act" that allows an embodied agent to interact meaningfully with its surroundings.
 
-Humanoid robots could one day help with household chores, cooking, and providing companionship, transforming our daily lives.
+```mermaid
+flowchart TD
+    A[Sense] --&gt; B(Think);
+    B --&gt; C[Act];
+    C --&gt; D{Environment};
+    D --&gt; A;
 
-### Disaster Response
-
-Their ability to navigate human-centric environments makes them ideal for search and rescue operations in disaster zones that are too dangerous for humans.
-
-### Future Impact and Trends
-
-The future of humanoid robotics points towards greater integration of AI, improved human-robot interaction, and the development of more autonomous and adaptable robots that can learn and perform a wide variety of tasks.
----
-
-## 1.3 Key Components of a Humanoid Robot
-
-A humanoid robot is a complex system of hardware and software working in harmony.
-
-```
-      +-----------------+
-      |  AI Decision    |
-      |   Systems       |
-      +-------+---------+
-              |
-      +-------+---------+
-      |  Control        |
-      |   Systems       |
-      +-------+---------+
-              |
-+-------------+-------------+
-|                           |
-|      Mechanical           |
-|      Structure            |
-|                           |
-+-------------+-------------+
-|             |             |
-+------v------+------v------+
-|      |             |      |
-|  Actuators   |   Sensors   |
-| (muscles)    | (senses)    |
-+--------------+-------------+
-       ^             ^
-       |             |
-+------v-------------v------+
-|      Power Systems        |
-+---------------------------+
+    subgraph Robot
+        A;
+        B;
+        C;
+    end
 ```
 
--   **Mechanical Structure**: The physical frame or skeleton of the robot, which defines its shape and provides support.
--   **Sensors**: These are the robot's senses, allowing it to perceive the world. Common sensors include cameras (vision), microphones (hearing), and tactile sensors (touch).
--   **Actuators**: The "muscles" of the robot. These are motors that convert energy into motion, allowing the robot to move its limbs and joints.
--   **Control Systems**: The low-level system that translates commands from the AI into precise movements of the actuators.
--   **AI Decision Systems**: The "brain" of the robot. This is where the robot processes sensory information, makes decisions, and plans its actions.
--   **Power Systems**: The "heart" of the robot, providing the necessary electrical energy to all its components.
+Let's break it down with a human example: reaching for a cup of coffee.
+1.  **Sense**: Your eyes (sensors) see the cup's position, shape, and how full it is.
+2.  **Think**: Your brain (the processor) instantly calculates the trajectory your arm needs to take, how your hand should be shaped to grip it, and how much force to apply.
+3.  **Act**: Your muscles (actuators) execute the plan, moving your arm and hand to grasp the cup.
+4.  **Feedback**: As you act, you are constantly re-sensing. If the cup is hotter than expected, your tactile sensors give you feedback, and you might adjust your grip. This constant feedback loop is what makes physical interaction possible.
+
+A Physical AI operates on the very same principle, forming the core of its intelligence.
+
+### Learning Through Interaction
+
+Perhaps the most powerful aspect of Physical AI is its ability to learn from direct experience. Traditional machine learning models are often trained on static, pre-collected datasets. A model might be shown millions of pictures of cats to learn what a cat looks like.
+
+Physical AI, however, often utilizes **Reinforcement Learning**. The AI learns through trial and error, like a child learning to walk.
+-   An **action** is taken (e.g., trying to take a step).
+-   A **reward** or **penalty** is received (e.g., moving forward is a reward, falling over is a penalty).
+-   Over thousands or millions of trials, the AI learns a "policy"—a strategy of taking actions that maximize its rewards.
+
+This ability to learn from interaction is crucial for robots that need to operate in the messy, unpredictable real world, where it's impossible to pre-program a solution for every possible situation.
 
 ---
 
-## 1.4 Challenges in Building Humanoid Robots
+## 1.3 Part 2: The "Body" - The Rise of Humanoid Robotics
 
-Creating a functional humanoid robot presents numerous engineering challenges.
+Now that we've discussed the "mind," let's turn our attention to the "body." While robots come in all shapes and sizes, the humanoid form holds a special place in both our imagination and in engineering.
 
--   **Stability and Balance**: Maintaining balance while walking on two legs, especially on uneven surfaces, is a major hurdle.
--   **Locomotion**: Designing a walking gait that is both stable and energy-efficient is a complex task.
--   **Dexterous Manipulation**: Building hands that can grasp and manipulate a wide variety of objects with human-like dexterity is extremely difficult.
--   **Human-Robot Interaction**: For robots to work alongside humans, they need to be able to communicate and interact in a safe, intuitive, and natural way.
--   **Safety Constraints**: Humanoid robots are often large and powerful, so ensuring they can operate safely around people is a critical concern.
+### What is a Humanoid Robot?
 
----
+A **humanoid robot** is a robot with its body structure designed to resemble the human body. At a minimum, this usually means a torso, a head, two arms, and two legs. The reason for this mimicry isn't just cosmetic; it's deeply functional. Our world—our homes, cities, and workplaces—is built for humans. A robot shaped like a human can:
+-   **Navigate human-centric environments** like stairs, doorways, and cluttered rooms.
+-   **Use tools designed for human hands**, from power drills to kitchen spatulas.
+-   **Interact with humans in an intuitive way**, as we are naturally wired to understand and predict the motion of a human-like form.
 
-## 1.5 Case Studies
+### A Brief History: From Fiction to Factory
 
-### 1. Atlas (Boston Dynamics)
+The concept of artificial humans is ancient, but the scientific journey is more recent.
+-   **1920s**: The word "robot" was introduced to the world by Czech writer Karel Čapek in his play "R.U.R.," depicting artificial humanoid workers.
+-   **1973**: Japan's Waseda University built **WABOT-1**, the world's first full-scale humanoid robot. It could walk, communicate in Japanese, and measure distances and directions to objects using its external receptors.
+-   **Late 1990s - Early 2000s**: A period of rapid advancement, especially from Japanese companies.
 
--   **Purpose**: A research platform for disaster response and exploring the limits of whole-body mobility.
--   **Technologies Used**: Advanced hydraulics, real-time control systems, and sophisticated perception algorithms.
--   **Unique Innovations**: Known for its ability to perform parkour, dance, and recover from falls, demonstrating a high level of dynamic stability.
+### Major Breakthroughs and Key Examples
 
-### 2. ASIMO (Honda)
+The evolution of humanoid robotics can be seen through a few landmark creations:
 
--   **Purpose**: A research platform to study human-like mobility and interaction.
--   **Technologies Used**: Advanced walking algorithms, sensor fusion (vision and auditory), and a lightweight mechanical structure.
--   **Unique Innovations**: One of the first humanoid robots to demonstrate smooth, human-like walking and the ability to run.
+-   **Dynamic Bipedal Locomotion (Honda ASIMO, 2000)**: ASIMO (Advanced Step in Innovative Mobility) was a game-changer. It demonstrated stunningly smooth and human-like walking and was even capable of running and climbing stairs. ASIMO showed the world that stable bipedal locomotion was not just a theoretical possibility but a practical reality.
 
----
+-   **Dynamic Balance & Agility (Boston Dynamics Atlas, 2013-Present)**: Atlas pushed the boundaries of what a humanoid robot could do physically. Boston Dynamics used Atlas as a research platform to explore whole-body mobility. Viral videos of Atlas running over uneven terrain, performing backflips, and doing parkour demonstrated an unprecedented level of dynamic balance and agility, far beyond what was previously thought possible.
 
-## 1.6 Summary
-
-This module provided an introduction to the exciting field of humanoid robotics. We defined what a humanoid robot is, explored why they are important, examined their key components, and discussed the major challenges in building them. Through case studies, we saw how these concepts are applied in the real world.
+-   **Towards a General-Purpose Worker (Tesla Optimus, Figure 01, etc.)**: In the 2020s, the focus has shifted towards creating commercially viable, general-purpose humanoid robots. Companies like Tesla and Figure AI are developing robots with the explicit goal of performing useful work in factories, warehouses, and eventually homes. This new wave focuses on integrating advanced AI for autonomous task execution and on designing for mass manufacturing.
 
 ---
 
-## Glossary
+## 1.4 Part 3: The Intersection - Where Mind Meets Body
 
--   **Actuator**: A component of a machine that is responsible for moving and controlling a mechanism or system.
--   **Degrees of Freedom (DOF)**: The number of independent parameters that define the configuration of a mechanical system.
--   **Kinematics**: The study of the motion of objects without consideration of the forces that cause the motion.
--   **Dynamics**: The study of the forces and torques and their effect on motion.
+Separately, Physical AI and Humanoid Robotics are fascinating fields. Together, they are revolutionary.
 
----
+-   **Why Humanoids Need Physical AI**: A humanoid body without an advanced, adaptive mind is just a complex puppet. To perform any useful task, the robot needs to understand its goals, perceive its environment, and control its many joints in a coordinated, intelligent way. Physical AI provides the autonomy that makes a humanoid robot more than just a remote-controlled machine.
 
-## Required Background Knowledge
+-   **Why Physical AI Needs a Body**: An AI, no matter how intelligent, can't truly understand the physical world without interacting with it. The concept of "heavy" is abstract to an AI until it tries to lift an object. A humanoid body, with its versatile hands and mobile legs, provides the ultimate platform for a Physical AI to learn and apply its intelligence to the widest possible range of tasks in the human world.
 
--   Basic understanding of algebra and physics.
--   Familiarity with fundamental concepts of computer programming.
+The grand challenge for researchers and engineers today is to create a seamless fusion of mind and body—a robot with the physical grace and dexterity of a human, powered by a cognitive architecture that allows it to solve problems and learn on its own.
 
 ---
 
-## Diagrams and Figures Needed
+## 1.5 Part 4: Your Journey Begins - Getting Hands-On
 
--   A detailed diagram of a humanoid robot's mechanical structure, labeling key joints and links.
--   A flowchart illustrating the flow of information from sensors to AI to control systems to actuators.
+Theory is essential, but robotics is a hands-on discipline. Let's set up your digital workshop and write some code. The primary language we will use throughout this book is **Python**, due to its simplicity and the vast number of powerful libraries available for scientific computing and AI.
+
+### Setting Up Your Digital Workshop
+
+#### Step 1: Install Python
+If you don't already have Python installed, head to the official website: `https://www.python.org/downloads/`.
+
+-   **Windows**: Download the installer and run it. **Crucially, on the first screen of the installer, check the box that says "Add Python to PATH."** This will make it much easier to run Python from the command line.
+-   **macOS**: Python usually comes pre-installed. However, it's best to install the latest version. Download the installer from the Python website and run it.
+-   **Linux**: Python is almost certainly pre-installed. You can check your version by opening a terminal and typing `python3 --version`.
+
+To verify your installation, open a terminal (or Command Prompt on Windows) and type:
+```bash
+python --version
+# or on some systems
+python3 --version
+```
+You should see a version number like `Python 3.10.4`.
+
+#### Step 2: Install Essential Libraries
+We will start with two core libraries:
+-   `numpy`: The fundamental package for scientific computing in Python. It provides powerful tools for working with arrays and matrices.
+-   `matplotlib`: A comprehensive library for creating static, animated, and interactive visualizations in Python.
+
+Install them using `pip`, Python's package installer. Open your terminal and run:
+```bash
+pip install numpy matplotlib
+```
+
+### Code Example 1: A "Physical" Hello World
+
+Let's simulate something physical: a ball falling under the force of gravity. This simple example uses our new libraries to model the physics and visualize the result.
+
+Create a new file named `falling_ball.py` and enter the following code:
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --- Simulation Parameters ---
+# Gravitational acceleration (m/s^2)
+g = 9.81
+# Initial height (meters)
+h0 = 100
+# Initial vertical velocity (m/s)
+v0 = 0
+# Time steps (create 100 points from 0 seconds up to the moment it hits the ground)
+t_end = np.sqrt(2 * h0 / g)
+t = np.linspace(0, t_end, 100)
+
+# --- Physics Calculation ---
+# Equation of motion: h(t) = h0 + v0*t - 0.5*g*t^2
+h = h0 + v0 * t - 0.5 * g * t**2
+
+# --- Visualization ---
+plt.figure(figsize=(8, 6))
+plt.plot(t, h)
+plt.title("A Ball Falling Under Gravity")
+plt.xlabel("Time (s)")
+plt.ylabel("Height (m)")
+plt.grid(True)
+plt.show()
+
+print("Simulation complete. Check the plot window!")
+```
+
+**To Run This Code:**
+1.  Save the file.
+2.  Open a terminal in the same directory where you saved the file.
+3.  Execute the script with the command: `python falling_ball.py`
+
+A window should pop up showing you a graph of the ball's height decreasing over time—your first physics simulation!
+
+### Code Example 2: Representing a Simple Robot
+
+Let's represent a very basic 2-joint robotic arm in code. This shows how we can create a digital model of a physical robot.
+
+Create a file named `simple_arm.py` and add this code:
+```python
+import numpy as np
+
+class SimpleArm:
+    """A simple 2-joint robotic arm in 2D."""
+    def __init__(self, link1_length=1.0, link2_length=1.0):
+        """
+        Initializes the robot arm.
+        Args:
+            link1_length (float): Length of the first arm segment.
+            link2_length (float): Length of the second arm segment.
+        """
+        self.l1 = link1_length
+        self.l2 = link2_length
+        self.joint_angles = [0.0, 0.0] # [theta1, theta2] in radians
+
+    def set_joint_angles(self, theta1, theta2):
+        """Sets the angles of the joints."""
+        self.joint_angles = [theta1, theta2]
+
+    def get_end_effector_position(self):
+        """
+        Calculates the (x, y) position of the arm's tip.
+        This is called Forward Kinematics.
+        """
+        t1 = self.joint_angles[0]
+        t2 = self.joint_angles[1]
+
+        # Position of the first joint
+        x1 = self.l1 * np.cos(t1)
+        y1 = self.l1 * np.sin(t1)
+
+        # Position of the end effector relative to the first joint
+        x2 = self.l2 * np.cos(t1 + t2)
+        y2 = self.l2 * np.sin(t1 + t2)
+
+        # Total position
+        end_effector_x = x1 + x2
+        end_effector_y = y1 + y2
+
+        return (end_effector_x, end_effector_y)
+
+# --- Main execution ---
+if __name__ == "__main__":
+    # Create an arm with link lengths 1.5 and 1.0
+    my_arm = SimpleArm(link1_length=1.5, link2_length=1.0)
+
+    # Set joint angles (in radians, approx 45 degrees and 30 degrees)
+    angle1 = np.pi / 4
+    angle2 = np.pi / 6
+    my_arm.set_joint_angles(angle1, angle2)
+
+    # Get the position of the tip
+    position = my_arm.get_end_effector_position()
+
+    print(f"Arm link lengths: l1={my_arm.l1}, l2={my_arm.l2}")
+    print(f"Joint angles: theta1={angle1:.2f} rad, theta2={angle2:.2f} rad")
+    print(f"The arm's end effector is at position: (x={position[0]:.2f}, y={position[1]:.2f})")
+```
+Run this script with `python simple_arm.py`. This code doesn't produce a visual plot, but it's a crucial first step: creating a *digital twin* or model of a robot that we can control and query. We've just performed a core robotics calculation called **Forward Kinematics**, which we will explore deeply in a later module.
 
 ---
 
-## Tables and Datasets
+## 1.6 Module Summary & What's Next
 
--   A table comparing the specifications of different real-world humanoid robots (e.g., height, weight, DOF, battery life).
--   A dataset of sensor readings from a humanoid robot walking on a flat surface.
+Congratulations! In this module, you've taken your first major step into the world of Physical AI and Humanoid Robotics.
+-   We defined **Physical AI** as intelligence that can sense, act, and learn in the real world through the **sensorimotor loop**.
+-   We traced the history of **Humanoid Robotics** from science fiction to the advanced research platforms and emerging commercial products of today.
+-   We understood that the **intersection** of this mind and body is the key to creating truly capable, autonomous robots.
+-   Most importantly, you've **set up your development environment** and written code to simulate physics and model a simple robot.
+
+You now have the foundational context for the rest of this book. In Module 2, we will dive deep into the language of movement: **Kinematics**. We'll move beyond our simple arm model and learn how to mathematically describe and control the complex motion of humanoid robots.
+
 ---
 
 ## 1.7 Exercises
 
 ### Multiple Choice Questions
 
-1.  What is the primary characteristic of a humanoid robot?
-    a)  It can fly.
-    b)  It has a human-like body shape.
-    c)  It is always made of metal.
-    d)  It can cook.
+1.  What is the core concept of Physical AI?
+    a)  Running algorithms faster in the cloud.
+    b)  AI that is embodied and interacts with the physical world.
+    c)  Creating more realistic graphics for video games.
+    d)  A new type of computer chip.
 
-2.  Which of the following is a famous example of a humanoid robot?
-    a)  Roomba
-    b)  Hubble Space Telescope
-    c)  ASIMO
-    d)  Sojourner Rover
+2.  The "sense, think, act" cycle in an embodied agent is called:
+    a)  The Processing Pipeline
+    b)  The Sensorimotor Loop
+    c)  The Action-Reaction Cycle
+    d)  The Data-Feedback System
 
-3.  What does "bipedal locomotion" refer to?
-    a)  The ability to swim.
-    b)  The ability to walk on two legs.
-    c)  The ability to manipulate objects.
-    d)  The ability to speak.
+3.  Why is a humanoid form considered advantageous for robots?
+    a)  It looks less intimidating.
+    b)  It is the only form capable of walking.
+    c)  It can operate in environments and use tools designed for humans.
+    d)  It is cheaper to build than other forms.
 
-4.  Which of these is NOT a primary application of humanoid robotics?
-    a)  Healthcare
-    b)  Weather forecasting
-    c)  Disaster response
-    d)  Manufacturing
+4.  Which of these is NOT a primary library for scientific computing in Python?
+    a)  Numpy
+    b)  Matplotlib
+    c)  Photoshop
+    d)  pip
 
-5.  What is the main purpose of sensors on a humanoid robot?
-    a)  To provide power to the robot.
-    b)  To allow the robot to perceive its environment.
-    c)  To make the robot look more human.
-    d)  To play music.
+### Short Questions & Coding Exercises
 
-### Short Questions
-
-1.  List three key components of a humanoid robot and briefly describe their function.
-2.  Explain the main difference between a humanoid robot and a non-humanoid robot.
-3.  Describe two potential benefits of using humanoid robots in a disaster response scenario.
-4.  What are some of the major challenges in building a stable and balanced humanoid robot?
-5.  Why is human-robot interaction an important area of research in humanoid robotics?
+1.  In your own words, explain the difference between traditional Machine Learning and the Reinforcement Learning approach often used in Physical AI.
+2.  List two reasons why the development of Boston Dynamics' Atlas was considered a major breakthrough.
+3.  **Coding Exercise 1**: Modify the `falling_ball.py` script. Can you give the ball an initial *upward* velocity (e.g., `v0 = 20`) and see how the plot changes?
+4.  **Coding Exercise 2**: In the `simple_arm.py` script, what happens to the end effector position if you set both `theta1` and `theta2` to `0`? What about if you set `theta1` to `np.pi / 2` (90 degrees) and `theta2` to `0`? Predict the results, then run the code to verify.
 
 ### Assessment Rubrics/Solutions
 
 **Multiple Choice Answers:**
-1.  b) It has a human-like body shape.
-2.  c) ASIMO
-3.  b) The ability to walk on two legs.
-4.  b) Weather forecasting
-5.  b) To allow the robot to perceive its environment.
+1.  b) AI that is embodied and interacts with the physical world.
+2.  b) The Sensorimotor Loop
+3.  c) It can operate in environments and use tools designed for humans.
+4.  c) Photoshop
 
-**Short Question Guidelines:**
-1.  *Answer should include three of the following: Mechanical structure (body), Sensors (perception), Actuators (movement), Control systems (brain), AI (decision-making), Power systems (energy).*
-2.  *Answer should focus on morphology: humanoid robots are designed to resemble the human body, while non-humanoid robots are designed for specific tasks and can have any form.*
-3.  *Answer should mention at least two of the following: ability to navigate human-centric environments, use human tools, or perform tasks too dangerous for people.*
-4.  *Answer should discuss the complexity of maintaining balance on two legs, especially on uneven terrain, and the high number of degrees of freedom to control.*
-5.  *Answer should explain that for humanoid robots to work effectively with and around people, they need to be able to communicate, understand social cues, and behave in a safe and predictable manner.*
+**Short Question & Coding Guidelines:**
+1.  *Answer should mention that traditional ML often uses static, pre-labeled datasets, while Reinforcement Learning involves learning through trial-and-error interaction with an environment, driven by rewards and penalties.*
+2.  *Answer should mention its unprecedented dynamic balance, agility, and ability to traverse complex terrain and recover from disturbances, demonstrated through acts like parkour and backflips.*
+3.  *The plot should now show a parabolic arc, starting at the initial height, going up to a peak, and then falling back down to the ground.*
+4.  *Prediction: If both angles are 0, the arm is fully extended along the x-axis, so the position should be (l1 + l2, 0). If `theta1` is `np.pi / 2` (90 degrees) and `theta2` is 0, the arm should be fully extended along the y-axis, with position (0, l1 + l2). The code will verify these predictions.*
