@@ -1,40 +1,32 @@
 import os
 from qdrant_client import QdrantClient
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+from .config import settings # Import settings from the centralized config
 
 def get_qdrant_client() -> QdrantClient:
     """
     Initializes and returns a Qdrant client instance.
-    Connection settings are loaded from environment variables.
+    Connection settings are loaded from the centralized config.
     """
-    qdrant_url = os.getenv("QDRANT_URL")
-    qdrant_api_key = os.getenv("QDRANT_API_KEY")
-
-    if not qdrant_url:
-        raise ValueError("QDRANT_URL environment variable is not set.")
+    if not settings.QDRANT_URL:
+        raise ValueError("QDRANT_URL is not set in configuration.")
 
     try:
         client = QdrantClient(
-            url=qdrant_url,
-            api_key=qdrant_api_key,  # API key is optional for local/unsecured instances
+            url=settings.QDRANT_URL,
+            api_key=settings.QDRANT_API_KEY,
         )
-        # Optional: Test connection
-        # client.get_collections()
-        print("Successfully connected to Qdrant.")
+        print("Successfully initialized Qdrant client.")
         return client
     except Exception as e:
-        print(f"Error connecting to Qdrant: {e}")
+        print(f"Error initializing Qdrant client: {e}")
         raise
 
 if __name__ == "__main__":
     # Example usage:
     try:
         qdrant_client = get_qdrant_client()
-        # You can perform some operations with the client here, exp:
-        # print(qdrant_client.get_collections())
+        print(f"Qdrant client: {qdrant_client}")
+        # Further operations like qdrant_client.get_collections() can be added here
     except ValueError as e:
         print(f"Configuration Error: {e}")
     except Exception as e:
