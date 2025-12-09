@@ -11,10 +11,10 @@ This feature introduces a Retrieval-Augmented Generation (RAG) chatbot embedded 
 
 ## Technical Context
 
-**Language/Version**: NEEDS CLARIFICATION: Should the RAG backend service be implemented using FastAPI (Python) as specified, separate from the existing Node.js backend, or should the RAG logic be integrated directly into the existing Node.js backend?
+**Language/Version**: RAG service will be implemented using FastAPI (Python) as a separate application. Existing backend remains Node.js.
 **Primary Dependencies**: OpenAI Agents / ChatKit SDK, Qdrant Cloud Free Tier (vector database), LLM client libraries (e.g., OpenAI SDK)
 **Storage**: Neon Serverless Postgres (metadata, logs), Qdrant Cloud Free Tier (vector database) for embeddings
-**Testing**: Existing backend uses `jest`. NEEDS CLARIFICATION: What testing framework should be used for the new RAG service if it's a separate FastAPI/Python application?
+**Testing**: `pytest` will be used for the FastAPI RAG service.
 **Target Platform**: Linux server (for FastAPI backend), Web browser (for Docusaurus frontend)
 **Project Type**: Web application (Frontend + Backend)
 **Performance Goals**: NFR2: Latency: The chatbot SHALL provide responses to user queries within an acceptable timeframe (e.g., <5 seconds for typical queries).
@@ -66,10 +66,15 @@ frontend/
 │   └── services/
 └── tests/
 
-NEEDS CLARIFICATION: If the RAG service is a separate FastAPI application, where should its directory reside in the project structure? (e.g., a new top-level `rag-service/` directory, or within `backend/` as a sub-service?)
+rag-service/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
 ```
 
-**Structure Decision**: The project will primarily follow the existing "Web application (frontend + backend)" structure. A decision is pending on the placement of the new RAG service within this structure.
+**Structure Decision**: The project will primarily follow the existing "Web application (frontend + backend)" structure. A new top-level `rag-service/` directory will be created for the FastAPI RAG service to ensure clear separation from the existing Node.js backend.
 
 ## Complexity Tracking
 
