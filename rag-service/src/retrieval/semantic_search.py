@@ -1,79 +1,124 @@
+import asyncio
 from typing import List
-from qdrant_client.http.models import Filter, FieldCondition, MatchValue
-from ..db.qdrant import get_qdrant_client, QDRANT_COLLECTION_NAME
-from ..ingestion.embedder import get_embedding
+from qdrant_client import QdrantClient
+from qdrant_client.models import ScoredPoint
 from ..ingestion.schema import ContentChunk
+from ..llm.client import LLMClient
+from ..utils.api_errors import InternalServerErrorException
+from ..config.settings import settings
 
-async def semantic_search(query: str, top_k: int = 5) -> List[ContentChunk]:
+class QdrantService:
     """
-    Performs a semantic search in Qdrant for relevant content chunks based on the query.
+    Service for interacting with Qdrant for vector search.
     """
-    client = get_qdrant_client()
-    
-    # 1. Generate embedding for the query
-    query_embedding = get_embedding(query)
+    def __init__(self, llm_client: LLMClient):
+        self.client = QdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
+        self.llm_client = llm_client # Used for embedding queries
 
-    # 2. Perform semantic search in Qdrant
-    try:
-        search_result = client.search(
-            collection_name=QDRANT_COLLECTION_NAME,
-            query_vector=query_embedding,
-            limit=top_k,
-            # For filtering by metadata, e.g., to only search a specific chapter:
-            # query_filter=Filter(
-            #     must=[
-            #         FieldCondition(
-            #             key="chapter_title",
-            #             match=MatchValue(value="Introduction to Humanoid Robotics")
-            #         )
-            #     ]
-            # )
-        )
-        
-        # 3. Convert search results back to ContentChunk objects
-        retrieved_chunks: List[ContentChunk] = []
-        for hit in search_result:
-            payload = hit.payload
-            # Ensure embedding is not none for ContentChunk
-            if hit.vector is None:
-                print(f"Warning: Retrieved chunk {hit.id} has no vector.")
-                continue
-            
-            # Reconstruct ContentChunk from payload and vector
-            chunk = ContentChunk(
-                chunk_id=payload.get("chunk_id", str(hit.id)), # Use hit.id if chunk_id not in payload
-                source_file=payload.get("source_file", "unknown"),
-                chapter_title=payload.get("chapter_title", "unknown"),
-                section_title=payload.get("section_title"),
-                content=payload.get("content", ""),
-                embedding=hit.vector # Qdrant returns the vector if `with_vectors=True` (default)
+    async def search_qdrant(self, query_embedding: List[float], limit: int = 5) -> List[ScoredPoint]:
+        """
+        Performs a vector search in Qdrant with a timeout.
+        """
+        try:
+            # Qdrant client methods are typically blocking, so run in a thread pool
+            search_result = await asyncio.wait_for(
+                asyncio.to_thread(
+                    self.client.search,
+                    collection_name=settings.QDRANT_COLLECTION_NAME,
+                    query_vector=query_embedding,
+                    limit=limit
+                ),
+                timeout=settings.QDRANT_SEARCH_TIMEOUT
             )
-            retrieved_chunks.append(chunk)
-            
-        return retrieved_chunks
-    except Exception as e:
-        print(f"Error during semantic search in Qdrant: {e}")
-        raise
+            return search_result
+        except asyncio.TimeoutError:
+            raise InternalServerErrorException(
+                code="QDRANT_SEARCH_TIMEOUT",
+                message=f"Qdrant search timed out after {settings.QDRANT_SEARCH_TIMEOUT} seconds.",
+                target="Qdrant"
+            )
+        except Exception as e:
+            raise InternalServerErrorException(
+                code="QDRANT_SEARCH_FAILED",
+                message=f"Qdrant search failed: {e}",
+                target="Qdrant"
+            )
+
+async def semantic_search(query: str, limit: int = 5) -> List[ContentChunk]:
+    """
+    Performs a semantic search for the given query using Qdrant.
+    """
+    llm_client = LLMClient() # Initialize LLM client for embedding
+    qdrant_service = QdrantService(llm_client)
+
+    # 1. Generate embedding for the query
+    query_embedding = await llm_client.get_embedding(query)
+
+    # 2. Search Qdrant
+    search_results = await qdrant_service.search_qdrant(query_embedding, limit=limit)
+
+    # 3. Convert search results to ContentChunk (assuming payload contains necessary fields)
+    content_chunks: List[ContentChunk] = []
+    for scored_point in search_results:
+        payload = scored_point.payload
+        if payload:
+            content_chunks.append(
+                ContentChunk(
+                    content=payload.get("content", ""),
+                    source_file=payload.get("source_file", "unknown"),
+                    chapter_title=payload.get("chapter_title", "unknown"),
+                    section_title=payload.get("section_title"),
+                )
+            )
+    return content_chunks
+
+# Example usage
+async def main():
+    print("--- Testing Semantic Search with Timeout ---")
+    # Mock LLM client for embedding
+    class MockLLMClient:
+        async def get_embedding(self, text: str) -> List[float]:
+            print(f"Generating mock embedding for: {text}")
+            return [0.1] * 1536 # Example embedding
+
+    llm_client_instance = MockLLMClient()
+    
+    # Patch QdrantClient to mock search results
+    with patch('qdrant_client.QdrantClient') as MockQdrantClient:
+        mock_qdrant_instance = MockQdrantClient.return_value
+        mock_qdrant_instance.search.return_value = [
+            ScoredPoint(id=1, version=1, score=0.9, payload={"content": "Mock content 1", "source_file": "doc1.md", "chapter_title": "Ch1"}),
+            ScoredPoint(id=2, version=1, score=0.8, payload={"content": "Mock content 2", "source_file": "doc2.md", "chapter_title": "Ch2"})
+        ]
+
+        qdrant_service = QdrantService(llm_client_instance)
+
+        try:
+            chunks = await qdrant_service.search_qdrant([0.1]*1536)
+            print(f"Found {len(chunks)} chunks.")
+            for chunk in chunks:
+                print(f"- {chunk.content[:20]}... from {chunk.payload.get('source_file')}")
+        except InternalServerErrorException as e:
+            print(f"Error: {e.to_api_error().model_dump_json(indent=2)}")
+
+    print("\n--- Testing Semantic Search Timeout (simulated) ---")
+    original_timeout = settings.QDRANT_SEARCH_TIMEOUT
+    # Temporarily override setting for testing purposes
+    settings.QDRANT_SEARCH_TIMEOUT = 0.01 
+    
+    with patch('qdrant_client.QdrantClient') as MockQdrantClient:
+        mock_qdrant_instance = MockQdrantClient.return_value
+        # Make the search call 'hang' longer than the timeout
+        mock_qdrant_instance.search.side_effect = lambda **kwargs: asyncio.sleep(0.1) 
+
+        qdrant_service = QdrantService(llm_client_instance)
+        try:
+            await qdrant_service.search_qdrant([0.1]*1536)
+        except InternalServerErrorException as e:
+            print(f"Error: {e.to_api_error().model_dump_json(indent=2)}")
+        finally:
+            settings.QDRANT_SEARCH_TIMEOUT = original_timeout # Reset setting
 
 if __name__ == "__main__":
-    # Example usage (requires Qdrant running, config.py settings, and content ingested)
-    # This example requires an actual Qdrant instance with data.
-    # from ..config import settings
-    # if not settings.QDRANT_URL or not settings.OPENAI_API_KEY:
-    #     print("QDRANT_URL and OPENAI_API_KEY must be set to run this example.")
-    # else:
-    #     async def test_semantic_search():
-    #         print("Testing semantic search:")
-    #         query = "what are the main components of a robot?"
-    #         results = await semantic_search(query, top_k=2)
-    #         if results:
-    #             for i, chunk in enumerate(results):
-    #                 print(f"\n--- Result {i+1} (Score: {chunk.score if hasattr(chunk, 'score') else 'N/A'}) ---")
-    #                 print(f"Content: {chunk.content[:200]}...")
-    #                 print(f"Source: {chunk.source_file}, Chapter: {chunk.chapter_title}")
-    #         else:
-    #             print("No results found.")
-
-    #     import asyncio
-    #     asyncio.run(test_semantic_search())
-    pass
+    from unittest.mock import patch
+    asyncio.run(main())

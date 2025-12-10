@@ -64,17 +64,17 @@ def format_whole_book_summary_prompt(chapter_summaries: List[str]) -> str:
 
 if __name__ == "__main__":
     # Example usage:
-    print("---"Explanation Prompt"---")
+    print("--- Explanation Prompt ---")
     print(format_explanation_prompt("The quick brown fox jumps over the lazy dog.", "What is a fox?"))
     
-    print("\n---"Chapter Summary Prompt"---")
+    print("\n---Chapter Summary Prompt---")
     print(format_chapter_summary_prompt("Animals", "Foxes are mammals. Dogs are also mammals."))
     
-    print("\n---"Whole Book Summary Prompt"---")
+    print("\n---Whole Book Summary Prompt---")
     print(format_whole_book_summary_prompt(["Chapter 1: About Foxes.", "Chapter 2: About Dogs."]))
 
-    print("\n---"Refusal Response"---")
+    print("\n---Refusal Response---")
     print(REFUSAL_RESPONSE)
 
-    print("\n---"Embedded Question Prompt"---")
+    print("\n---Embedded Question Prompt---")
     print(EMBEDDED_QUESTION_PROMPT.format(embedded_question="PID controller"))

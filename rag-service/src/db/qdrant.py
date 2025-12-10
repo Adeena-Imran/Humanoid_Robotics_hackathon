@@ -1,6 +1,6 @@
 import os
 from qdrant_client import QdrantClient
-from .config import settings # Import settings from the centralized config
+from ..config.settings import settings # Import settings from the centralized config
 
 def get_qdrant_client() -> QdrantClient:
     """

@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+openai
+tiktoken
+psycopg2-binary
+qdrant-client
+python-dotenv
+numpy
+asyncpg # Assuming this will be used for real Neon connection
+httpx # Often a dependency for FastAPI testing or other http clients
+
+# For development and testing
+pytest
+pytest-asyncio
+python-multipart # For handling form data in FastAPI, useful for client testing

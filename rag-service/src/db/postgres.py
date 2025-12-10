@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2 import OperationalError
-from .config import settings # Import settings from the centralized config
+from ..config.settings import settings # Import settings from the centralized config
 
 def get_postgres_connection():
     """
