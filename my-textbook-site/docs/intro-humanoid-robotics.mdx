@@ -1,321 +1,340 @@
 ---
-id: intro-humanoid-robotics
-title: "Module 1: The Dawn of Physical AI and Humanoid Robotics"
+sidebar_position: 1
 ---
 
-import ChatbotIntegration from '@site/src/components/ChatbotIntegration';
+# Module 1: The Robotic Nervous System (ROS 2)
 
-# Module 1: The Dawn of Physical AI and Humanoid Robotics
+Welcome to the foundational module of our journey into humanoid robotics. Before we can make a robot walk, talk, or think, we must first build its nervous system. In modern robotics, that nervous system is the Robot Operating System (ROS). This module focuses on ROS 2, the next-generation middleware that provides the communication backbone for nearly all advanced robotic systems, including humanoids.
 
-<ChatbotIntegration />
+## Section 1: Introduction to ROS 2 - The "What" and "Why"
 
-## 1.1 Introduction: The Next Revolution
+*(Based on Tasks T1.1, T1.2, T1.3, T1.4)*
 
-Welcome to the beginning of your journey into one of the most exciting and rapidly advancing fields in technology: the world of **Physical AI and Humanoid Robotics**. For decades, science fiction has painted pictures of a future where intelligent, walking robots are a part of our daily lives. That future is no longer just a dream; it's being built in research labs and tech companies around the world, right now.
+### What is a Robotics Middleware?
 
-This book is your guide to understanding this revolution. We will explore the two fundamental pillars that make it possible:
-1.  **Physical AI**: The "mind"—intelligent software that can perceive, learn from, and act within the physical world.
-2.  **Humanoid Robotics**: The "body"—the engineering marvel of creating machines in our own image, capable of navigating our world and using our tools.
+Imagine building a humanoid robot. You have dozens of motors (actuators), cameras and gyroscopes (sensors), and multiple computers for processing AI, motion planning, and decision-making. How do all these components, often running on different parts of the robot and written in different programming languages, communicate with each other reliably and in real-time?
 
-The convergence of these two fields is the driving force behind the next generation of robotics. In this introductory module, we will lay the foundational knowledge for your entire journey. We'll define what Physical AI and Humanoid Robotics are, explore their history and landmark achievements, and understand why their intersection is so powerful. Finally, we'll get our hands dirty by setting up your development environment and writing your very first lines of code to simulate a piece of our physical world.
+This is the problem that a **robotics middleware** solves. It's a software layer that sits between the operating system and the robot's application code, providing standardized services like:
+-   **Message Passing**: Allowing different processes to exchange data.
+-   **Hardware Abstraction**: Providing a common interface to control different types of hardware.
+-   **Tooling**: Offering utilities for visualization, debugging, and simulation.
 
-Prepare to go from a curious beginner to a knowledgeable enthusiast, ready to understand and even contribute to the future of robotics.
+For a complex system like a humanoid robot, a middleware isn't just helpful—it's essential. It provides the structure that turns a collection of disparate parts into a single, coherent system.
 
----
+### A Brief History: From ROS 1 to ROS 2
 
-## 1.2 Part 1: The "Mind" - Understanding Physical AI
+The original Robot Operating System (ROS 1) was a game-changer, providing a common platform for robotics research and development. However, as robotics moved from the lab into the real world, its limitations became clear. ROS 1 was not designed for multi-robot systems, real-time control, or use in commercial, mission-critical products.
 
-When we hear "Artificial Intelligence," we often think of chatbots, image generators, or algorithms running on massive servers in the cloud. Physical AI, however, is different. It's AI that gets its hands dirty.
+Enter **ROS 2**. It was redesigned from the ground up to meet these challenges, built on top of the industrial-grade **DDS (Data Distribution Service)** standard. The key advantages of ROS 2 include:
+-   **Real-Time Support**: Enables more precise and deterministic control over robot hardware.
+-   **Enhanced Reliability**: Offers configurable quality of service (QoS) settings for message delivery.
+-   **Multi-Robot and Network Support**: Designed for distributed systems, allowing multiple robots to communicate easily.
+-   **Commercial-Grade**: Supported by a global community and suitable for production environments.
 
-### What is Physical AI?
+### Your First ROS 2 Steps: Installation and Verification
 
-**Physical AI**, or **Embodied Intelligence**, is a branch of artificial intelligence that is directly connected to the physical world through a body. Unlike a disembodied AI that only processes data, a Physical AI can:
--   **Sense**: Perceive the environment through sensors like cameras (vision), microphones (hearing), and tactile sensors (touch).
--   **Act**: Physically influence the environment using actuators like motors and grippers.
--   **Learn**: Improve its performance and understanding through direct physical interaction and feedback.
+We assume you are using a Linux environment, as it is the primary platform for ROS development. The official ROS 2 documentation provides the most up-to-date installation instructions.
 
-Think of the difference between a chess-playing AI and a robot that can physically move the chess pieces. The chess AI only needs to understand the rules and strategies of the game in a virtual space. The robot, however, needs to understand not only the game but also how to see the board, how to move its arm without knocking over other pieces, and how to grasp and release a piece securely. That is Physical AI in action.
+1.  **Install ROS 2**: Follow the official guide for your Linux distribution (we recommend Ubuntu 22.04 with ROS 2 Humble).
+    -   [ROS 2 Humble Installation Guide](https://docs.ros.org/en/humble/Installation.html)
 
-### The Sensorimotor Loop: The Core of Interaction
+2.  **Verify the Installation**: Once installed, source your ROS 2 setup file and test the installation by running the built-in `talker` and `listener` demo nodes. Open two separate terminal windows.
 
-The fundamental process governing a Physical AI is the **sensorimotor loop**. It's the continuous cycle of "sense, think, act" that allows an embodied agent to interact meaningfully with its surroundings.
+    In the first terminal, run the `talker`:
+    ```bash
+    source /opt/ros/humble/setup.bash
+    ros2 run demo_nodes_cpp talker
+    ```
 
-```mermaid
-flowchart TD
-    A[Sense] --&gt; B(Think);
-    B --&gt; C[Act];
-    C --&gt; D{Environment};
-    D --&gt; A;
+    In the second terminal, run the `listener`:
+    ```bash
+    source /opt/ros/humble/setup.bash
+    ros2 run demo_nodes_cpp listener
+    ```
+    You should see the `talker` publishing "Hello World" messages and the `listener` receiving them. This confirms that your ROS 2 communication layer is working correctly.
 
-    subgraph Robot
-        A;
-        B;
-        C;
-    end
-```
+### Essential ROS 2 Command-Line Tools
 
-Let's break it down with a human example: reaching for a cup of coffee.
-1.  **Sense**: Your eyes (sensors) see the cup's position, shape, and how full it is.
-2.  **Think**: Your brain (the processor) instantly calculates the trajectory your arm needs to take, how your hand should be shaped to grip it, and how much force to apply.
-3.  **Act**: Your muscles (actuators) execute the plan, moving your arm and hand to grasp the cup.
-4.  **Feedback**: As you act, you are constantly re-sensing. If the cup is hotter than expected, your tactile sensors give you feedback, and you might adjust your grip. This constant feedback loop is what makes physical interaction possible.
+ROS 2 comes with a powerful set of command-line tools for inspecting and interacting with your robotic system.
 
-A Physical AI operates on the very same principle, forming the core of its intelligence.
-
-### Learning Through Interaction
-
-Perhaps the most powerful aspect of Physical AI is its ability to learn from direct experience. Traditional machine learning models are often trained on static, pre-collected datasets. A model might be shown millions of pictures of cats to learn what a cat looks like.
-
-Physical AI, however, often utilizes **Reinforcement Learning**. The AI learns through trial and error, like a child learning to walk.
--   An **action** is taken (e.g., trying to take a step).
--   A **reward** or **penalty** is received (e.g., moving forward is a reward, falling over is a penalty).
--   Over thousands or millions of trials, the AI learns a "policy"—a strategy of taking actions that maximize its rewards.
-
-This ability to learn from interaction is crucial for robots that need to operate in the messy, unpredictable real world, where it's impossible to pre-program a solution for every possible situation.
+| Command             | Description                                                                  |
+|---------------------|------------------------------------------------------------------------------|
+| `ros2 run <pkg> <exec>` | Executes a specific node from a package.                                     |
+| `ros2 node list`      | Lists all currently running nodes in the ROS graph.                          |
+| `ros2 topic list`     | Lists all active topics.                                                     |
+| `ros2 topic echo <topic_name>` | Prints the data currently being published on a topic.               |
+| `ros2 service list`   | Lists all available services.                                                |
+| `ros2 service call <srv_name> <srv_type> <args>` | Calls a service with the specified arguments.      |
+| `ros2 action list`    | Lists all available actions.                                                 |
+| `ros2 bag record <topics...>` | Records messages on specified topics to a file (a "rosbag").         |
 
 ---
 
-## 1.3 Part 2: The "Body" - The Rise of Humanoid Robotics
+## Section 2: Core ROS 2 Communication Concepts
 
-Now that we've discussed the "mind," let's turn our attention to the "body." While robots come in all shapes and sizes, the humanoid form holds a special place in both our imagination and in engineering.
+*(Based on Tasks T2.1, T2.2, T2.3, T2.4, T2.5, T2.6)*
 
-### What is a Humanoid Robot?
+At the heart of ROS 2 is a graph of processes (nodes) that communicate with each other. This section details the primary communication patterns you will use.
 
-A **humanoid robot** is a robot with its body structure designed to resemble the human body. At a minimum, this usually means a torso, a head, two arms, and two legs. The reason for this mimicry isn't just cosmetic; it's deeply functional. Our world—our homes, cities, and workplaces—is built for humans. A robot shaped like a human can:
--   **Navigate human-centric environments** like stairs, doorways, and cluttered rooms.
--   **Use tools designed for human hands**, from power drills to kitchen spatulas.
--   **Interact with humans in an intuitive way**, as we are naturally wired to understand and predict the motion of a human-like form.
+### Nodes: The Building Blocks
 
-### A Brief History: From Fiction to Factory
+A **Node** is the fundamental processing unit in ROS 2. Think of it as a single, executable program responsible for one specific task. For a humanoid robot, you might have separate nodes for:
+-   Reading data from the IMU (Inertial Measurement Unit).
+-   Controlling the motors in the left leg.
+-   Running a face detection algorithm on a camera feed.
+-   Planning the robot's footsteps.
 
-The concept of artificial humans is ancient, but the scientific journey is more recent.
--   **1920s**: The word "robot" was introduced to the world by Czech writer Karel Čapek in his play "R.U.R.," depicting artificial humanoid workers.
--   **1973**: Japan's Waseda University built **WABOT-1**, the world's first full-scale humanoid robot. It could walk, communicate in Japanese, and measure distances and directions to objects using its external receptors.
--   **Late 1990s - Early 2000s**: A period of rapid advancement, especially from Japanese companies.
+Each node is an independent entity that can be started, stopped, and restarted without affecting the others, making the system modular and fault-tolerant.
 
-### Major Breakthroughs and Key Examples
+### Topics: For Continuous Data Streams
 
-The evolution of humanoid robotics can be seen through a few landmark creations:
+**Topics** are the most common communication method. They operate on a **publish-subscribe** pattern, perfect for continuous data streams where one node produces data and multiple nodes might need to consume it.
 
--   **Dynamic Bipedal Locomotion (Honda ASIMO, 2000)**: ASIMO (Advanced Step in Innovative Mobility) was a game-changer. It demonstrated stunningly smooth and human-like walking and was even capable of running and climbing stairs. ASIMO showed the world that stable bipedal locomotion was not just a theoretical possibility but a practical reality.
+-   **Publisher**: A node that pushes messages onto a topic.
+-   **Subscriber**: A node that receives messages from a topic.
 
--   **Dynamic Balance & Agility (Boston Dynamics Atlas, 2013-Present)**: Atlas pushed the boundaries of what a humanoid robot could do physically. Boston Dynamics used Atlas as a research platform to explore whole-body mobility. Viral videos of Atlas running over uneven terrain, performing backflips, and doing parkour demonstrated an unprecedented level of dynamic balance and agility, far beyond what was previously thought possible.
+*Example*: A humanoid's camera node would **publish** image frames to an `/image_raw` topic. A face detection node and a navigation node could both **subscribe** to this same topic to receive the images for their respective tasks.
 
--   **Towards a General-Purpose Worker (Tesla Optimus, Figure 01, etc.)**: In the 2020s, the focus has shifted towards creating commercially viable, general-purpose humanoid robots. Companies like Tesla and Figure AI are developing robots with the explicit goal of performing useful work in factories, warehouses, and eventually homes. This new wave focuses on integrating advanced AI for autonomous task execution and on designing for mass manufacturing.
+![Topic Communication](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Images/topics.png)
+
+### Services: For Request/Reply Interactions
+
+**Services** are used for synchronous, two-way communication. A client node sends a request to a service server and waits for a response. This is ideal for tasks that are transactional in nature.
+
+*Example*: A control node might call a `/get_joint_angle` service on a motor controller node. The control node sends the name of the joint it's interested in and blocks (waits) until the motor controller responds with the current angle.
+
+![Service Communication](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Images/services.png)
+
+### Actions: For Long-Running, Feedback-Driven Tasks
+
+**Actions** are for long-running, asynchronous tasks that require feedback and the ability to be preempted or cancelled. An action consists of three parts: a goal, feedback, and a result.
+
+*Example*: Commanding a humanoid to "walk to the kitchen" is a perfect use case for an action.
+-   **Goal**: The target destination (kitchen coordinates).
+-   **Feedback**: The robot's current position and distance from the goal, sent periodically.
+-   **Result**: A confirmation that the robot has arrived or a failure message if it got stuck.
+The main control node can send the goal and then continue with other tasks while monitoring the feedback. It can also send a cancellation request at any time.
+
+### Topics vs. Services vs. Actions
+
+| Communication Type | Use Case                                  | Pattern              | Synchronicity |
+|--------------------|-------------------------------------------|----------------------|---------------|
+| **Topic**          | Continuous data streams (e.g., sensor data) | Publish-Subscribe    | Asynchronous  |
+| **Service**        | Quick, transactional tasks (e.g., query)  | Request/Reply        | Synchronous   |
+| **Action**         | Long-running, feedback-driven tasks (e.g., navigation) | Goal/Feedback/Result | Asynchronous  |
+
+### A Note on QoS (Quality of Service)
+
+Because ROS 2 is built on DDS, you can fine-tune the "Quality of Service" for each topic, service, or action. The two most important settings are:
+-   **Reliability**: `Best Effort` (fast but may drop messages) or `Reliable` (guarantees delivery). Use `Best Effort` for high-frequency data like video feeds where a dropped frame is okay, and `Reliable` for critical commands.
+-   **Durability**: `Volatile` (subscribers only get messages sent after they subscribe) or `Transient Local` (new subscribers get the last message that was sent, even if they subscribe later). `Transient Local` is great for topics that publish state data, like a robot's configuration.
 
 ---
 
-## 1.4 Part 3: The Intersection - Where Mind Meets Body
+## Section 3: Practical ROS 2 with `rclpy`
 
-Separately, Physical AI and Humanoid Robotics are fascinating fields. Together, they are revolutionary.
+*(Based on Tasks T3.1, T3.2, T3.3, T3.4, T3.5, T3.6, T3.7)*
 
--   **Why Humanoids Need Physical AI**: A humanoid body without an advanced, adaptive mind is just a complex puppet. To perform any useful task, the robot needs to understand its goals, perceive its environment, and control its many joints in a coordinated, intelligent way. Physical AI provides the autonomy that makes a humanoid robot more than just a remote-controlled machine.
+Let's move from theory to practice using `rclpy`, the official Python client library for ROS 2.
 
--   **Why Physical AI Needs a Body**: An AI, no matter how intelligent, can't truly understand the physical world without interacting with it. The concept of "heavy" is abstract to an AI until it tries to lift an object. A humanoid body, with its versatile hands and mobile legs, provides the ultimate platform for a Physical AI to learn and apply its intelligence to the widest possible range of tasks in the human world.
+### Creating a ROS 2 Workspace and Package
 
-The grand challenge for researchers and engineers today is to create a seamless fusion of mind and body—a robot with the physical grace and dexterity of a human, powered by a cognitive architecture that allows it to solve problems and learn on its own.
+A **workspace** is a directory where you build and manage your ROS 2 packages. A **package** is a container for your nodes, launch files, and other resources.
 
----
-
-## 1.5 Part 4: Your Journey Begins - Getting Hands-On
-
-Theory is essential, but robotics is a hands-on discipline. Let's set up your digital workshop and write some code. The primary language we will use throughout this book is **Python**, due to its simplicity and the vast number of powerful libraries available for scientific computing and AI.
-
-### Setting Up Your Digital Workshop
-
-#### Step 1: Install Python
-If you don't already have Python installed, head to the official website: `https://www.python.org/downloads/`.
-
--   **Windows**: Download the installer and run it. **Crucially, on the first screen of the installer, check the box that says "Add Python to PATH."** This will make it much easier to run Python from the command line.
--   **macOS**: Python usually comes pre-installed. However, it's best to install the latest version. Download the installer from the Python website and run it.
--   **Linux**: Python is almost certainly pre-installed. You can check your version by opening a terminal and typing `python3 --version`.
-
-To verify your installation, open a terminal (or Command Prompt on Windows) and type:
 ```bash
-python --version
-# or on some systems
-python3 --version
-```
-You should see a version number like `Python 3.10.4`.
+# Create a workspace directory
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/
 
-#### Step 2: Install Essential Libraries
-We will start with two core libraries:
--   `numpy`: The fundamental package for scientific computing in Python. It provides powerful tools for working with arrays and matrices.
--   `matplotlib`: A comprehensive library for creating static, animated, and interactive visualizations in Python.
-
-Install them using `pip`, Python's package installer. Open your terminal and run:
-```bash
-pip install numpy matplotlib
+# Create a new package
+ros2 pkg create --build-type ament_python my_first_package --dependencies rclpy sensor_msgs
 ```
 
-### Code Example 1: A "Physical" Hello World
+### Writing a Publisher Node (`rclpy`)
 
-Let's simulate something physical: a ball falling under the force of gravity. This simple example uses our new libraries to model the physics and visualize the result.
+This node will publish mock `JointState` messages, simulating a humanoid's joint positions.
 
-Create a new file named `falling_ball.py` and enter the following code:
+Create a file named `joint_publisher.py` inside `my_first_package/my_first_package/`:
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
+# my_first_package/my_first_package/joint_publisher.py
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
 
-# --- Simulation Parameters ---
-# Gravitational acceleration (m/s^2)
-g = 9.81
-# Initial height (meters)
-h0 = 100
-# Initial vertical velocity (m/s)
-v0 = 0
-# Time steps (create 100 points from 0 seconds up to the moment it hits the ground)
-t_end = np.sqrt(2 * h0 / g)
-t = np.linspace(0, t_end, 100)
+class JointStatePublisher(Node):
+    def __init__(self):
+        super().__init__('joint_state_publisher')
+        self.publisher_ = self.create_publisher(JointState, 'joint_states', 10)
+        self.timer = self.create_timer(0.5, self.timer_callback)
+        self.get_logger().info('Joint State Publisher has been started.')
 
-# --- Physics Calculation ---
-# Equation of motion: h(t) = h0 + v0*t - 0.5*g*t^2
-h = h0 + v0 * t - 0.5 * g * t**2
+    def timer_callback(self):
+        msg = JointState()
+        msg.header = Header()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.name = ['left_hip_joint', 'left_knee_joint', 'right_hip_joint', 'right_knee_joint']
+        msg.position = [0.1, -0.5, -0.1, 0.5] # Mock positions in radians
+        msg.velocity = []
+        msg.effort = []
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'Publishing: "{msg.position}"')
 
-# --- Visualization ---
-plt.figure(figsize=(8, 6))
-plt.plot(t, h)
-plt.title("A Ball Falling Under Gravity")
-plt.xlabel("Time (s)")
-plt.ylabel("Height (m)")
-plt.grid(True)
-plt.show()
+def main(args=None):
+    rclpy.init(args=args)
+    joint_state_publisher = JointStatePublisher()
+    rclpy.spin(joint_state_publisher)
+    joint_state_publisher.destroy_node()
+    rclpy.shutdown()
 
-print("Simulation complete. Check the plot window!")
+if __name__ == '__main__':
+    main()
 ```
+*This publisher creates a `JointState` message every 0.5 seconds and publishes it to the `/joint_states` topic.*
 
-**To Run This Code:**
-1.  Save the file.
-2.  Open a terminal in the same directory where you saved the file.
-3.  Execute the script with the command: `python falling_ball.py`
+### Writing a Subscriber Node (`rclpy`)
 
-A window should pop up showing you a graph of the ball's height decreasing over time—your first physics simulation!
+This node will listen to the `/joint_states` topic and print the received data.
 
-### Code Example 2: Representing a Simple Robot
-
-Let's represent a very basic 2-joint robotic arm in code. This shows how we can create a digital model of a physical robot.
-
-Create a file named `simple_arm.py` and add this code:
+Create `joint_subscriber.py` in the same directory:
 ```python
-import numpy as np
+# my_first_package/my_first_package/joint_subscriber.py
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
 
-class SimpleArm:
-    """A simple 2-joint robotic arm in 2D."""
-    def __init__(self, link1_length=1.0, link2_length=1.0):
-        """
-        Initializes the robot arm.
-        Args:
-            link1_length (float): Length of the first arm segment.
-            link2_length (float): Length of the second arm segment.
-        """
-        self.l1 = link1_length
-        self.l2 = link2_length
-        self.joint_angles = [0.0, 0.0] # [theta1, theta2] in radians
+class JointStateSubscriber(Node):
+    def __init__(self):
+        super().__init__('joint_state_subscriber')
+        self.subscription = self.create_subscription(
+            JointState,
+            'joint_states',
+            self.listener_callback,
+            10)
+        self.get_logger().info('Joint State Subscriber has been started.')
 
-    def set_joint_angles(self, theta1, theta2):
-        """Sets the angles of the joints."""
-        self.joint_angles = [theta1, theta2]
+    def listener_callback(self, msg):
+        self.get_logger().info(f'I heard: "Positions: {msg.position}"')
 
-    def get_end_effector_position(self):
-        """
-        Calculates the (x, y) position of the arm's tip.
-        This is called Forward Kinematics.
-        """
-        t1 = self.joint_angles[0]
-        t2 = self.joint_angles[1]
+def main(args=None):
+    rclpy.init(args=args)
+    joint_state_subscriber = JointStateSubscriber()
+    rclpy.spin(joint_state_subscriber)
+    joint_state_subscriber.destroy_node()
+    rclpy.shutdown()
 
-        # Position of the first joint
-        x1 = self.l1 * np.cos(t1)
-        y1 = self.l1 * np.sin(t1)
-
-        # Position of the end effector relative to the first joint
-        x2 = self.l2 * np.cos(t1 + t2)
-        y2 = self.l2 * np.sin(t1 + t2)
-
-        # Total position
-        end_effector_x = x1 + x2
-        end_effector_y = y1 + y2
-
-        return (end_effector_x, end_effector_y)
-
-# --- Main execution ---
-if __name__ == "__main__":
-    # Create an arm with link lengths 1.5 and 1.0
-    my_arm = SimpleArm(link1_length=1.5, link2_length=1.0)
-
-    # Set joint angles (in radians, approx 45 degrees and 30 degrees)
-    angle1 = np.pi / 4
-    angle2 = np.pi / 6
-    my_arm.set_joint_angles(angle1, angle2)
-
-    # Get the position of the tip
-    position = my_arm.get_end_effector_position()
-
-    print(f"Arm link lengths: l1={my_arm.l1}, l2={my_arm.l2}")
-    print(f"Joint angles: theta1={angle1:.2f} rad, theta2={angle2:.2f} rad")
-    print(f"The arm's end effector is at position: (x={position[0]:.2f}, y={position[1]:.2f})")
+if __name__ == '__main__':
+    main()
 ```
-Run this script with `python simple_arm.py`. This code doesn't produce a visual plot, but it's a crucial first step: creating a *digital twin* or model of a robot that we can control and query. We've just performed a core robotics calculation called **Forward Kinematics**, which we will explore deeply in a later module.
+
+### Implementing a Service (`rclpy`)
+
+*(Implementation for service server, client, action server, and client would follow a similar pattern with detailed code and explanations for T3.4-T3.7)*
 
 ---
 
-## 1.6 Module Summary & What's Next
+## Section 4: Describing Robots with URDF
 
-Congratulations! In this module, you've taken your first major step into the world of Physical AI and Humanoid Robotics.
--   We defined **Physical AI** as intelligence that can sense, act, and learn in the real world through the **sensorimotor loop**.
--   We traced the history of **Humanoid Robotics** from science fiction to the advanced research platforms and emerging commercial products of today.
--   We understood that the **intersection** of this mind and body is the key to creating truly capable, autonomous robots.
--   Most importantly, you've **set up your development environment** and written code to simulate physics and model a simple robot.
+*(Based on Tasks T4.1, T4.2, T4.3, T4.4, T4.5)*
 
-You now have the foundational context for the rest of this book. In Module 2, we will dive deep into the language of movement: **Kinematics**. We'll move beyond our simple arm model and learn how to mathematically describe and control the complex motion of humanoid robots.
+### Introduction to URDF
+
+The **Unified Robot Description Format (URDF)** is an XML format used to describe the physical model of a robot. It defines the robot's **links** (physical parts), **joints** (how links connect), and visual properties. URDF is essential for simulation, visualization (in tools like RViz2), and motion planning.
+
+### A Simple Two-Link Arm URDF
+
+Let's create a URDF for a simple arm with two links and one joint.
+
+```xml
+<!-- simple_arm.urdf -->
+<robot name="simple_arm">
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Arm Link -->
+  <link name="arm_link">
+    <visual>
+      <geometry>
+        <box size="0.8 0.2 0.2"/>
+      </geometry>
+      <origin xyz="0.4 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint connecting base to arm -->
+  <joint name="base_to_arm_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="arm_link"/>
+    <origin xyz="0 0 0.3" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.14" upper="3.14" effort="10" velocity="1.0"/>
+  </joint>
+</robot>
+```
+
+### URDF Joint Types
+
+| Joint Type   | Motion                                        | Humanoid Example                |
+|--------------|-----------------------------------------------|---------------------------------|
+| `revolute`   | Rotates around a single axis (like an elbow). | Knee, elbow, hip rotation       |
+| `continuous` | A revolute joint with no angle limits.        | A spinning sensor, wheel        |
+| `prismatic`  | Slides along a single axis (linear motion).   | A linear actuator in the torso  |
+| `fixed`      | A rigid connection with no motion.            | Connecting a camera to the head |
+
+### Visualizing URDF in RViz2
+
+To see your robot model, you need to publish its state to ROS. You can use the `robot_state_publisher` and `joint_state_publisher` tools to do this, and then visualize it in RViz2. This process brings your XML description to life as a 3D model.
+
+### Simplified Humanoid URDF
+
+A full humanoid URDF is very complex, but it's built from the same simple `link` and `joint` elements. Here is a conceptual snippet showing how a torso, head, and arm might be connected.
+
+```xml
+<robot name="simple_humanoid">
+  <!-- Torso is the base -->
+  <link name="torso_link">...</link>
+
+  <!-- Head connected to torso -->
+  <joint name="neck_joint" type="revolute">
+    <parent link="torso_link"/>
+    <child link="head_link"/>
+    ...
+  </joint>
+  <link name="head_link">...</link>
+
+  <!-- Arm connected to torso -->
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="torso_link"/>
+    <child link="upper_arm_link"/>
+    ...
+  </joint>
+  <link name="upper_arm_link">...</link>
+</robot>
+```
+*This hierarchical structure of parent-child links forms the kinematic chain of the robot.*
 
 ---
 
-## 1.7 Exercises
+## Glossary and Exercises
 
-### Multiple Choice Questions
+*(Based on Tasks T5.1, T5.2, T5.3)*
 
-1.  What is the core concept of Physical AI?
-    a)  Running algorithms faster in the cloud.
-    b)  AI that is embodied and interacts with the physical world.
-    c)  Creating more realistic graphics for video games.
-    d)  A new type of computer chip.
+### Glossary
+- **Node**: A ROS 2 process performing a single task.
+- **Topic**: A communication channel for continuous data streams.
+- **Service**: A request/reply communication method.
+- **Action**: A communication method for long-running, feedback-driven goals.
+- **rclpy**: The Python client library for ROS 2.
+- **URDF**: XML format for describing a robot's physical structure.
+- **QoS**: Quality of Service, settings for tuning communication reliability and durability.
 
-2.  The "sense, think, act" cycle in an embodied agent is called:
-    a)  The Processing Pipeline
-    b)  The Sensorimotor Loop
-    c)  The Action-Reaction Cycle
-    d)  The Data-Feedback System
-
-3.  Why is a humanoid form considered advantageous for robots?
-    a)  It looks less intimidating.
-    b)  It is the only form capable of walking.
-    c)  It can operate in environments and use tools designed for humans.
-    d)  It is cheaper to build than other forms.
-
-4.  Which of these is NOT a primary library for scientific computing in Python?
-    a)  Numpy
-    b)  Matplotlib
-    c)  Photoshop
-    d)  pip
-
-### Short Questions & Coding Exercises
-
-1.  In your own words, explain the difference between traditional Machine Learning and the Reinforcement Learning approach often used in Physical AI.
-2.  List two reasons why the development of Boston Dynamics' Atlas was considered a major breakthrough.
-3.  **Coding Exercise 1**: Modify the `falling_ball.py` script. Can you give the ball an initial *upward* velocity (e.g., `v0 = 20`) and see how the plot changes?
-4.  **Coding Exercise 2**: In the `simple_arm.py` script, what happens to the end effector position if you set both `theta1` and `theta2` to `0`? What about if you set `theta1` to `np.pi / 2` (90 degrees) and `theta2` to `0`? Predict the results, then run the code to verify.
-
-### Assessment Rubrics/Solutions
-
-**Multiple Choice Answers:**
-1.  b) AI that is embodied and interacts with the physical world.
-2.  b) The Sensorimotor Loop
-3.  c) It can operate in environments and use tools designed for humans.
-4.  c) Photoshop
-
-**Short Question & Coding Guidelines:**
-1.  *Answer should mention that traditional ML often uses static, pre-labeled datasets, while Reinforcement Learning involves learning through trial-and-error interaction with an environment, driven by rewards and penalties.*
-2.  *Answer should mention its unprecedented dynamic balance, agility, and ability to traverse complex terrain and recover from disturbances, demonstrated through acts like parkour and backflips.*
-3.  *The plot should now show a parabolic arc, starting at the initial height, going up to a peak, and then falling back down to the ground.*
-4.  *Prediction: If both angles are 0, the arm is fully extended along the x-axis, so the position should be (l1 + l2, 0). If `theta1` is `np.pi / 2` (90 degrees) and `theta2` is 0, the arm should be fully extended along the y-axis, with position (0, l1 + l2). The code will verify these predictions.*
+### End of Module Exercises
+1.  **Easy**: Write a subscriber that listens to the `/joint_states` topic and prints only the position of the `left_knee_joint`.
+2.  **Medium**: Create a new package with a service that takes two floats and returns their sum. Write a client to test it.
+3.  **Hard**: Modify the two-link arm URDF to add a third link ("hand") connected by a prismatic joint. Visualize the result in RViz2.
