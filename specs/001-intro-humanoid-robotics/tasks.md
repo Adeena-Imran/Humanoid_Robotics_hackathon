@@ -1,198 +1,73 @@
----
+# Implementation Tasks: Module 1 - The Robotic Nervous System (ROS 2)
 
-description: "Task list for Module 1: Introduction to Humanoid Robotics"
----
+**Feature**: `001-the-robotic-nervous-system`
+**Status**: To Do
 
-# Tasks: Module 1: Introduction to Humanoid Robotics
+This document lists the implementation tasks for creating the content of Module 1, derived from the `spec.md` and `plan.md`. Tasks are designed to be achievable by a motivated learner and map directly to the learning plan.
 
-**Input**: Design documents from `specs/001-intro-humanoid-robotics/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+## Task Format
 
-**Tests**: The feature specification (spec.md) does not explicitly request test tasks in the traditional sense for a content generation project. However, validation and verification steps are included.
-
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
-
-## Format: `[ID] [P?] [Story] Description with file path`
-
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
-
-## Path Conventions
-
-- Paths are relative to the repository root.
-
-## Phase 1: Setup (Shared Infrastructure)
-
-**Purpose**: Environment preparation for content generation
-
-- [X] T001 Ensure all required agents are configured for content generation (`.gemini/commands/agents/*`)
-- [X] T002 Verify that Docusaurus (latest stable version) is set up for publishing (`docs/`)
+- **ID**: A unique identifier for the task (e.g., T1.1).
+- **Section**: Maps to the corresponding section in `plan.md`.
+- **Type**: `Conceptual` or `Hands-on`.
+- **Description**: A clear, actionable description of the task.
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+### Section 1: Introduction to ROS 2 - The "What" and "Why"
 
-**Purpose**: Core understanding and initial data preparation
-
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
-
-- [X] T003 Understand the overall structure of Module 1 as per the `spec.md` and user outline (`specs/001-intro-humanoid-robotics/spec.md`)
-- [X] T004 Prepare `rag_content_agent` with initial data sources for "Humanoid Robotics" topics (`skills/prepare_chunks_for_rag_skill.md`)
-
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+| ID   | Section | Type        | Description                                                                                                     |
+|------|---------|-------------|-----------------------------------------------------------------------------------------------------------------|
+| T1.1 | 1       | Conceptual  | Write the introductory chapter explaining what a robotics middleware is and why it's crucial for complex robots like humanoids. |
+| T1.2 | 1       | Conceptual  | Draft a brief history of ROS, highlighting the key reasons for the transition from ROS 1 to ROS 2 (e.g., DDS, real-time support). |
+| T1.3 | 1       | Hands-on    | Create a tutorial on installing ROS 2 and verifying the installation using built-in demo nodes (`talker`/`listener`). |
+| T1.4 | 1       | Conceptual  | Produce a table of essential ROS 2 command-line tools (`ros2 run`, `ros2 topic`, `ros2 node`, etc.) with brief descriptions. |
 
 ---
 
-## Phase 3: User Story 1 - Understand Core Concepts (Priority: P1) 🎯 MVP
+### Section 2: Core ROS 2 Communication Concepts
 
-**Goal**: Generate foundational content for "What Are Humanoid Robots?" and "Why Humanoid Robotics Matters?"
-
-**Independent Test**: A student can read sections 1.1 and 1.2 and successfully define humanoid robots and explain their significance.
-
-### Implementation for User Story 1
-
-- [X] T005 [US1] Gather contextual knowledge for "What Are Humanoid Robots?" using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T006 [US1] Gather contextual knowledge for "Why Humanoid Robotics Matters" using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T007 [US1] Adjust tone and audience level for sections 1.1 and 1.2 using `personalization_agent` (`.gemini/commands/agents/personalization_agent.md`)
-- [X] T008 [US1] Generate content for "1.1 What Are Humanoid Robots?" as per outline (`docs/module-1.mdx` - partial)
-- [X] T009 [US1] Generate content for "1.2 Why Humanoid Robotics Matters" as per outline (`docs/module-1.mdx` - partial)
-
-**Checkpoint**: At this point, User Story 1 content should be generated and ready for initial review
+| ID   | Section | Type        | Description                                                                                                                              |
+|------|---------|-------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| T2.1 | 2       | Conceptual  | Create a chapter defining a ROS 2 Node and its role as a fundamental process in a ROS 2 system. Include a simple diagram.              |
+| T2.2 | 2       | Conceptual  | Write a detailed explanation of ROS 2 Topics, covering the publish-subscribe pattern. Use a humanoid's camera feed as a practical example. |
+| T2.3 | 2       | Conceptual  | Write a detailed explanation of ROS 2 Services, covering the request/reply pattern. Use a "get_joint_angle" service as an example.        |
+| T2.4 | 2       | Conceptual  | Write a detailed explanation of ROS 2 Actions, covering the long-running, feedback-driven pattern. Use a "walk_to_target" action as an example. |
+| T2.5 | 2       | Conceptual  | Create a comparative table that clearly outlines the differences and ideal use cases for Topics, Services, and Actions.                     |
+| T2.6 | 2       | Conceptual  | Draft a simplified guide to ROS 2 QoS settings, explaining the concepts of Reliability and Durability with practical recommendations.      |
 
 ---
 
-## Phase 4: User Story 2 - Apply Knowledge through Practice (Priority: P2)
+### Section 3: Practical ROS 2 with `rclpy`
 
-**Goal**: Generate exercises and assessment rubrics for Module 1.
-
-**Independent Test**: A student can attempt the generated exercises and verify their answers using the provided rubrics.
-
-### Implementation for User Story 2
-
-- [X] T010 [US2] Gather contextual knowledge for "Exercises" (MCQs, Short Questions) using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T011 [US2] Adjust tone and audience level for "Exercises" using `personalization_agent` (`.gemini/commands/agents/personalization_agent.md`)
-- [X] T012 [US2] Generate 5 MCQs with answers for Module 1 (`docs/module-1.mdx` - partial)
-- [X] T013 [US2] Generate 5 Short Questions for Module 1 (`docs/module-1.mdx` - partial)
-- [X] T014 [US2] Generate Assessment Rubrics/Solutions for exercises (`docs/module-1.mdx` - partial)
-
-**Checkpoint**: User Stories 1 AND 2 content should both be available for review
+| ID   | Section | Type        | Description                                                                                                                             |
+|------|---------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| T3.1 | 3       | Hands-on    | Develop a step-by-step tutorial for creating a new ROS 2 package and workspace.                                                         |
+| T3.2 | 3       | Hands-on    | Write a Python script (`rclpy`) for a publisher node that sends out mock humanoid joint states (`sensor_msgs/msg/JointState`).            |
+| T3.3 | 3       | Hands-on    | Write a corresponding subscriber node in Python (`rclpy`) that listens to the joint states and prints them to the console.                |
+| T3.4 | 3       | Hands-on    | Implement a ROS 2 service server in Python that takes a joint name (string) and returns a mock angle (float).                             |
+| T3.5 | 3       | Hands-on    | Write a service client node in Python that calls the service from T3.4 and prints the result.                                             |
+| T3.6 | 3       | Hands-on    | Create a simple action server in Python that simulates a humanoid robot "waving" its arm, providing feedback on the progress of the wave. |
+| T3.7 | 3       | Hands-on    | Write an action client in Python that sends a goal to the "wave" action server and logs the feedback and final result.                  |
 
 ---
 
-## Phase 5: User Story 3 - Use Module as a Reference (Priority: P3)
+### Section 4: Describing Robots with URDF
 
-**Goal**: Generate remaining core content (Key Components, Challenges, Case Studies, Summary, Glossary, Background Knowledge).
-
-**Independent Test**: A user can use the generated sections to find definitions, understand components, or learn about case studies.
-
-### Implementation for User Story 3
-
-- [X] T015 [US3] Gather contextual knowledge for "Key Components of a Humanoid Robot" using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T016 [US3] Gather contextual knowledge for "Challenges in Building Humanoid Robots" using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T017 [US3] Gather contextual knowledge for "Case Studies" (2-3 robots) using `rag_content_agent` (`.gemini/commands/agents/rag_content_agent.md`)
-- [X] T018 [US3] Adjust tone and audience level for sections 1.3, 1.4, 1.5, 1.6 using `personalization_agent` (`.gemini/commands/agents/personalization_agent.md`)
-- [X] T019 [US3] Generate content for "1.3 Key Components of a Humanoid Robot" (including ASCII diagrams) (`docs/module-1.mdx` - partial)
-- [X] T020 [US3] Generate content for "1.4 Challenges in Building Humanoid Robots" (`docs/module-1.mdx` - partial)
-- [X] T021 [US3] Generate content for "1.5 Case Studies" (2-3 robots) (`docs/module-1.mdx` - partial)
-- [X] T022 [US3] Generate content for "1.6 Summary" (`docs/module-1.mdx` - partial)
-- [X] T023 [US3] Generate "Glossary terms" for Module 1 (`docs/module-1.mdx` - partial)
-- [X] T024 [US3] Generate "Required background knowledge" section (`docs/module-1.mdx` - partial)
-- [X] T025 [US3] Generate placeholder descriptions for "Diagrams or figures needed" (`docs/module-1.mdx` - partial)
-- [X] T026 [US3] Generate placeholder descriptions for "Tables and datasets" (`docs/module-1.mdx` - partial)
-
-**Checkpoint**: All user stories content should now be generated
+| ID   | Section | Type        | Description                                                                                                                         |
+|------|---------|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| T4.1 | 4       | Conceptual  | Write an introduction to URDF, explaining its purpose and XML-based syntax.                                                         |
+| T4.2 | 4       | Hands-on    | Create a simple URDF file for a two-link robotic arm, defining the `link` and `joint` elements with visual and collision properties. |
+| T4.3 | 4       | Conceptual  | Explain the different joint types in URDF (`revolute`, `continuous`, `prismatic`, `fixed`) with diagrams showing their motion.     |
+| T4.4 | 4       | Hands-on    | Guide the reader on how to visualize the created URDF file in RViz2, demonstrating the link between the XML code and the 3D model. |
+| T4.5 | 4       | Conceptual  | Provide and dissect a simplified URDF for a full humanoid robot, focusing on the hierarchical structure of the links and joints.    |
 
 ---
 
-## Phase N: Polish & Cross-Cutting Concerns
+### General Tasks & Exercises
 
-**Purpose**: Finalization and validation of the generated module.
-
-- [X] T027 Compile all generated MDX content into a single `module-1.mdx` file (`docs/module-1.mdx`)
-- [X] T028 Verify `module-1.mdx` against MDX format rules (headings, bullet points, no invalid HTML, Docusaurus compatibility) (`docs/module-1.mdx`)
-- [X] T029 Perform a final review of the complete module against `spec.md` and `constitution.md` (`docs/module-1.mdx`, `specs/001-intro-humanoid-robotics/spec.md`, `.specify/memory/constitution.md`)
-
----
-
-## Dependencies & Execution Order
-
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P2)**: Can start after Foundational (Phase 2) - May integrate with US1 but should be independently testable
-- **User Story 3 (P3)**: Can start after Foundational (Phase 2) - May integrate with US1/US2 but should be independently testable
-
-### Within Each User Story
-
-- Content generation for specific sections must align with the agent pipeline (RAG -> Personalization -> Book Writer).
-- Tasks creating partial `docs/module-1.mdx` files are implicitly sequential for the final compilation task.
-
-### Parallel Opportunities
-
-- Tasks within a phase marked [P] can run in parallel.
-- Once Foundational phase completes, different user stories could be worked on in parallel by different agents/teams.
-- RAG and Personalization tasks for different sections within the same user story could potentially run in parallel.
-
----
-
-## Parallel Example: User Story 1 (Content Generation)
-
-```bash
-# RAG and Personalization for different sections could run in parallel:
-Task: "Gather contextual knowledge for 'What Are Humanoid Robots?' using rag_content_agent"
-Task: "Gather contextual knowledge for 'Why Humanoid Robotics Matters' using 'rag_content_agent'"
-Task: "Adjust tone and audience level for sections 1.1 and 1.2 using 'personalization_agent'"
-```
-
----
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Review User Story 1 content
-5. Proceed to next phases once MVP is acceptable
-
-### Incremental Delivery
-
-1. Complete Setup + Foundational → Foundation ready
-2. Generate User Story 1 content → Review independently
-3. Generate User Story 2 content → Review independently
-4. Generate User Story 3 content → Review independently
-5. Each generated content increment adds value.
-
-### Parallel Team Strategy
-
-With multiple agents (or human team members):
-
-1. Agent/Team 1 completes Setup + Foundational together
-2. Once Foundational is done:
-   - Agent/Team 1: User Story 1 content generation
-   - Agent/Team 2: User Story 2 content generation
-   - Agent/Team 3: User Story 3 content generation
-3. Content pieces are then compiled and reviewed.
-
----
-
-## Notes
-
-- [P] tasks = different operations, potentially different agents/parts of the content.
-- [Story] label maps task to specific user story for traceability.
-- Each user story content generation should be independently reviewable.
-- Verify generated content against quality standards.
-- Commit after each task or logical group (e.g., after a section is fully generated).
-- Avoid: vague tasks, conflicts if agents write to the same file simultaneously without merge strategy.
-
+| ID   | Section | Type        | Description                                                                                                        |
+|------|---------|-------------|--------------------------------------------------------------------------------------------------------------------|
+| T5.1 | All     | Conceptual  | Create a glossary of all key terms introduced in the module (e.g., Node, Topic, URDF, rclpy, QoS).                   |
+| T5.2 | All     | Hands-on    | Develop a set of end-of-module exercises (Easy, Medium, Hard) that require the reader to combine concepts from all sections. |
+| T5.3 | All     | Conceptual  | Write assessment rubrics and solutions for the exercises in T5.2.                                                  |
