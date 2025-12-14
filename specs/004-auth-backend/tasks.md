@@ -1,189 +1,72 @@
----
+# Implementation Tasks: Module 4 - Vision-Language-Action (VLA)
 
-description: "Tasks for Authentication Backend implementation"
----
+**Feature**: `004-vision-language-action`
+**Status**: To Do
 
-# Tasks: Authentication Backend
+This document lists the implementation tasks for the capstone Module 4, derived from the `spec.md` and `plan.md`. These tasks are integration-heavy, designed to bring together all concepts from the previous modules into a single, intelligent system.
 
-**Input**: Design documents from `/specs/004-auth-backend/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/auth.yaml
+## Task Format
 
-**Tests**: Test tasks are NOT generated unless explicitly requested. The current feature specification does not explicitly request TDD or test generation.
-
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
-
-## Format: `[ID] [P?] [Story] Description with file path`
-
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
-
-## Path Conventions
-
-- **Web app**: `backend/src/` (as per plan.md)
+-   **ID**: A unique identifier for the task (e.g., T1.1).
+-   **Section**: Maps to the corresponding section in `plan.md`.
+-   **Type**: `Conceptual`, `Configuration`, or `Hands-on`.
+-   **Description**: A clear, actionable description of the task.
 
 ---
 
-## Phase 1: Setup (Project Initialization)
+### Section 1: The End-to-End VLA Pipeline
 
-**Purpose**: Project initialization and basic structure for the authentication backend.
-
-- [x] T001 Create `backend` directory and initialize Node.js project `backend/package.json`
-- [x] T002 Install core dependencies: `express`, `prisma`, `bcrypt`, `jsonwebtoken` `backend/package.json`
-- [x] T003 [P] Install development dependencies: `typescript`, `@types/node`, `@types/express`, `@types/bcrypt`, `@types/jsonwebtoken`, `ts-node-dev`, `eslint`, `prettier` `backend/package.json`
-- [x] T004 [P] Configure TypeScript `backend/tsconfig.json`
-- [x] T005 [P] Create basic project directories: `backend/prisma`, `backend/src`, `backend/src/routes`, `backend/src/controllers`, `backend/src/services`, `backend/src/utils`, `backend/tests`
-- [x] T006 Create `.env.example` file `backend/.env.example`
-- [x] T007 Initialize Prisma: add `DATABASE_URL` and `JWT_SECRET` variables to `.env.example` `backend/.env.example`
+| ID   | Section | Type       | Description                                                                                                                             |
+| :--- | :------ | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| T1.1 | 1       | Conceptual | Write the introductory chapter that frames Module 4 as the capstone, integrating Modules 1-3 into a cognitive robotics system.             |
+| T1.2 | 1       | Conceptual | Create the master architectural diagram of the VLA pipeline, showing all ROS 2 nodes, topics, and actions from voice input to robot execution. |
+| T1.3 | 1       | Config     | Create a new ROS 2 package (e.g., `vla_system`) that will contain all the new nodes for this module.                                        |
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+### Section 2: From Voice to Text
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
-
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
-
-- [x] T008 Implement Prisma User model in `backend/prisma/schema.prisma`
-- [x] T009 [P] Implement password hashing utility functions in `backend/src/utils/hash.ts`
-- [x] T010 [P] Implement JWT utility functions (generate, verify) in `backend/src/utils/jwt.ts`
-- [x] T011 Setup main Express application logic in `backend/src/app.ts` (middleware, basic error handling)
-- [x] T012 Setup server entry point in `backend/src/server.ts` to start the Express app
-
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+| ID   | Section | Type       | Description                                                                                                                             |
+| :--- | :------ | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| T2.1 | 2       | Hands-on   | Write a Python script (`speech_to_text_node.py`) that uses a library (e.g., `whisper`) to capture audio from a microphone.               |
+| T2.2 | 2       | Hands-on   | Implement the ROS 2 node logic in the script to transcribe the captured audio into a text string.                                         |
+| T2.3 | 2       | Hands-on   | Publish the transcribed text string to a `std_msgs/msg/String` message on the `/user_command` ROS 2 topic.                                |
+| T2.4 | 2       | Config     | Create a launch file to run the `speech_to_text_node` and provide instructions for testing it independently.                              |
 
 ---
 
-## Phase 3: User Story 1 - New User Signup (Priority: P1)
+### Section 3: The LLM as a Cognitive Planner
 
-**Goal**: Allow new users to create an account by providing their name, email, and password, securely storing their credentials and confirming registration.
-
-**Independent Test**: A new user can successfully register with valid credentials (`POST /api/auth/signup`) and receive a confirmation of their new account without sensitive information being exposed.
-
-### Implementation for User Story 1
-
-- [x] T013 [US1] Implement signup service logic (create user, hash password) in `backend/src/services/auth.service.ts`
-- [x] T014 [US1] Implement signup controller logic (handle request, call service, send response) in `backend/src/controllers/auth.controller.ts`
-- [x] T015 [US1] Define signup route (`POST /api/auth/signup`) in `backend/src/routes/auth.routes.ts`
-- [x] T016 [US1] Integrate signup route into `backend/src/app.ts`
-
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
+| ID   | Section | Type       | Description                                                                                                                             |
+| :--- | :------ | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| T3.1 | 3       | Conceptual | Write a detailed chapter on prompt engineering for robotics, including how to define the robot's capabilities and desired output format.    |
+| T3.2 | 3       | Hands-on   | Write the system prompt for the humanoid robot, defining its available actions (`navigate_to`, `find_object`, `pick_up`) in the prompt.   |
+| T3.3 | 3       | Hands-on   | Create a ROS 2 node (`llm_planner_node.py`) that subscribes to the `/user_command` topic.                                                 |
+| T3.4 | 3       | Hands-on   | In the planner node, implement the logic to call an LLM API (local or remote) with the combined system prompt and user command.            |
+| T3.5 | 3       | Hands-on   | Implement parsing and validation for the returned JSON plan. Publish the validated plan to a `/task_plan` topic (custom message type).    |
 
 ---
 
-## Phase 4: User Story 2 - Existing User Login (Priority: P1)
+### Section 4: The ROS 2 Orchestrator
 
-**Goal**: Allow existing users to log in to their account by providing their email and password, verifying credentials and issuing a JWT for authentication.
-
-**Independent Test**: An existing user can successfully log in with correct credentials (`POST /api/auth/login`) and receive a valid JWT. Attempts with incorrect credentials should fail gracefully.
-
-### Implementation for User Story 2
-
-- [x] T017 [US2] Implement login service logic (verify password, generate JWT) in `backend/src/services/auth.service.ts`
-- [x] T018 [US2] Implement login controller logic (handle request, call service, send response) in `backend/src/controllers/auth.controller.ts`
-- [x] T019 [US2] Define login route (`POST /api/auth/login`) in `backend/src/routes/auth.routes.ts`
-- [x] T020 [US2] Integrate login route into `backend/src/app.ts`
-
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
+| ID   | Section | Type       | Description                                                                                                                             |
+| :--- | :------ | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| T4.1 | 4       | Hands-on   | Create the main orchestrator node (`orchestrator_node.py`) that subscribes to the `/task_plan` topic.                                      |
+| T4.2 | 4       | Hands-on   | Implement the core logic to parse the plan's sequence of tasks.                                                                           |
+| T4.3 | 4       | Hands-on   | For a `navigate_to` task, implement a ROS 2 action client that calls the Nav2 action server and waits for the result before proceeding.     |
+| T4.4 | 4       | Hands-on   | For a `find_object` task, implement a ROS 2 service client that calls a perception service (which would use Isaac ROS) to get object coordinates. |
+| T4.5 | 4       | Hands-on   | Implement state management and logging within the orchestrator to report the current status (e.g., "Executing step 1: navigate_to kitchen..."). |
 
 ---
 
-## Phase 5: User Story 3 - Developer Setup (Priority: P2)
+### Section 5: Assembling and Running the Full System (Capstone Project)
 
-**Goal**: Enable a developer to set up the authentication backend locally, including database setup, environment configuration, and running the application.
-
-**Independent Test**: A developer can follow the README steps to get the backend running, connect to the database, and execute migration scripts.
-
-### Implementation for User Story 3
-
-- [x] T021 [US3] Update `backend/package.json` with scripts for `dev`, `start`, `migrate`
-- [x] T022 [US3] Create `README.md` with comprehensive setup steps, including `.env` configuration, Prisma migrations, and running the application `backend/README.md`
-
-**Checkpoint**: All user stories should now be independently functional
-
----
-
-## Final Phase: Polish & Cross-Cutting Concerns
-
-**Purpose**: Improvements that affect multiple user stories and overall quality.
-
-- [x] T023 Implement comprehensive input validation for signup and login requests (e.g., using a validation library) `backend/src/controllers/auth.controller.ts`
-- [x] T024 Enhance error handling to return generic, secure messages as per NFR-003 `backend/src/app.ts`, `backend/src/controllers/auth.controller.ts`
-- [x] T025 Configure ESLint and Prettier for code quality and formatting `backend/.eslintrc.json`, `backend/.prettierrc`
-- [x] T026 Add basic unit tests for utility functions (hash, jwt) `backend/tests/unit/`
-- [x] T027 Conduct security review: ensure no sensitive information is logged or exposed inadvertently.
-
----
-
-## Dependencies & Execution Order
-
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1)**: Can start after Foundational (Phase 2) - May integrate with US1 but should be independently testable
-- **User Story 3 (P2)**: Can start after Foundational (Phase 2) - No dependencies on other stories (focus on documentation/scripts)
-
-### Within Each User Story
-
-- Models before services
-- Services before endpoints
-- Core implementation before integration
-- Story complete before moving to next priority
-
-### Parallel Opportunities
-
-- All Setup tasks marked [P] can run in parallel.
-- All Foundational tasks marked [P] can run in parallel (within Phase 2).
-- Once Foundational phase completes, User Stories 1, 2, and 3 can be worked on in parallel by different team members, though integration points should be managed.
-- Within User Stories, tasks marked [P] can run in parallel.
-
----
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Test User Story 1 independently
-5. Deploy/demo if ready
-
-### Incremental Delivery
-
-1. Complete Setup + Foundational → Foundation ready
-2. Add User Story 1 → Test independently → Deploy/Demo (MVP!)
-3. Add User Story 2 → Test independently → Deploy/Demo
-4. Add User Story 3 → Test independently → Deploy/Demo
-5. Each story adds value without breaking previous stories
-
-### Parallel Team Strategy
-
-With multiple developers:
-
-1. Team completes Setup + Foundational together
-2. Once Foundational is done:
-   - Developer A: User Story 1 (Signup)
-   - Developer B: User Story 2 (Login)
-   - Developer C: User Story 3 (Developer Setup)
-3. Stories complete and integrate independently
-
----
-
-## Notes
-
-- [P] tasks = different files, no dependencies
-- [Story] label maps task to specific user story for traceability
-- Each user story should be independently completable and testable
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+| ID   | Section | Type    | Description                                                                                                                                 |
+| :--- | :------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| T5.1 | 5       | Config  | Create the master ROS 2 launch file (`capstone.launch.py`) that brings up the entire system: Isaac Sim, all Module 3 nodes, and all Module 4 nodes. |
+| T5.2 | 5       | Hands-on | Write a detailed, step-by-step tutorial for running the full capstone scenario from a fresh terminal.                                          |
+| T5.3 | 5       | Hands-on | Create a debugging guide showing how to use `ros2 topic echo`, `ros2 action list`, and RViz2 to inspect each part of the VLA pipeline.           |
+| T5.4 | 5       | Conceptual | Write a concluding chapter on the challenges of VLA systems, including safety, interpretability, and the importance of robust system integration. |
+| T5.5 | 5       | Hands-on | **(Capstone Milestone 1)**: User speaks "go to the kitchen." Robot successfully navigates to the kitchen using Nav2.                           |
+| T5.6 | 5       | Hands-on | **(Capstone Milestone 2)**: User speaks "find the red apple." Robot navigates and uses its perception system to locate and point towards the apple. |
+| T5.7 | 5       | Hands-on | **(Capstone Milestone 3)**: User speaks "pick up the red apple." Robot performs all steps, including a simulated grasping action.              |

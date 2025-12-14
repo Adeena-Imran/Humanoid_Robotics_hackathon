@@ -1,273 +1,570 @@
 ---
-id: module4
-title: "Module 4: The Embodied AI - A Capstone Project"
+sid ebar_position: 4
 ---
 
-# Module 4: The Embodied AI - A Capstone Project
+# Module 4: Vision-Language-Action (VLA)
 
-## 4.1 Introduction: From Theory to Embodiment
+Welcome to the capstone module: Vision-Language-Action (VLA). This is where all the previous modules converge. We will integrate Large Language Models (LLMs) with our humanoid robotics stack, enabling our robot to understand natural language commands and execute complex tasks autonomously in a simulated environment. This module focuses on the "cognitive" layer, where an LLM acts as the robot's brain, orchestrating perception, navigation, and manipulation.
 
-Welcome to the final module. Our journey has taken us from the foundational concepts of Physical AI in Module 1, through the essential hardware and software building blocks in Module 2, to the complex dynamics of movement and decision-making in Module 3. We have assembled a powerful theoretical toolkit. Now, it is time to put it all together.
+## Section 1: The End-to-End VLA Pipeline
 
-This capstone module is a project-based exploration into the heart of modern embodied intelligence. We will bridge the gap between theory and a functioning, learning AI by tackling one of the most challenging and rewarding tasks in robotics: **teaching a humanoid to walk using Reinforcement Learning**.
+*(Based on Tasks T1.1, T1.2, T1.3)*
 
-Our project will follow these steps:
-1.  **Constructing the "Digital Gym"**: We will set up a physically accurate simulation environment using NVIDIA's Isaac Sim, a state-of-the-art tool for robotics AI development.
-2.  **Defining the Perception-Action Loop**: We will specify what our AI agent can see (its senses), what it can do (its actions), and what its goals are (the reward function).
-3.  **Training the "Mind"**: We will use a powerful RL algorithm, Proximal Policy Optimization (PPO), to train a neural network—the robot's "brain"—from scratch.
-4.  **Evaluation and Deployment**: We will evaluate our trained policy and discuss the final, crucial step of transferring this learned intelligence from simulation to a real robot.
+### A Cognitive Robotics System
 
-This module is the culmination of everything we have learned. Prepare to create your first true Embodied AI.
+Imagine speaking a command to your humanoid robot: "Robot, please bring me the red mug from the kitchen table." This module is about building the system that allows the robot to understand that command, plan a series of actions, and execute them in the physical world (or our digital twin). This is the essence of Vision-Language-Action.
 
----
+The VLA pipeline is a sophisticated orchestration of several components, each playing a critical role in transforming a high-level natural language instruction into a series of robotic behaviors. It builds directly upon the ROS 2 communication (Module 1), physics-based simulation (Module 2), and AI perception/navigation (Module 3) foundations we've established.
 
-## 4.2 Reinforcement Learning for Physical Systems
+### Architectural Diagram: The VLA Blueprint
 
-### A Quick Refresher
-As we touched on in Module 1, Reinforcement Learning (RL) is a paradigm where an **agent** learns to make decisions by interacting with an **environment**. The agent takes **actions**, observes the new **state** of the environment, and receives a **reward** signal. Its goal is to learn a **policy** (a strategy) that maximizes its cumulative reward over time.
+*(Textual description of the architectural diagram)*
 
-### The Challenge of Physicality
-Using RL for physical systems is far more difficult than for board games or video games.
--   **Sample Inefficiency**: It can take millions or even billions of attempts for an agent to learn a complex task. This is impractical on real hardware.
--   **Safety and Cost**: A real robot can be damaged by the random, exploratory actions an RL agent takes in the beginning. A single fall can be catastrophic.
--   **The "Sim-to-Real" Gap**: A policy trained in a perfect simulation may fail on a real robot due to subtle differences in physics, sensor noise, or motor delays.
+The VLA pipeline can be visualized as a series of connected blocks, with ROS 2 topics and actions serving as the communication channels:
 
-This is why modern robotics RL relies almost exclusively on **highly realistic, parallelizable simulation**.
+1.  **Voice Input**: A microphone captures the user's spoken command.
+2.  **Speech-to-Text (STT) Node**: This ROS 2 node processes the audio and converts it into a text string.
+    -   *Output*: `/user_command` (ROS 2 `std_msgs/msg/String`)
+3.  **LLM Planner Node**: This ROS 2 node receives the text command, interacts with a Large Language Model (LLM), and outputs a structured task plan.
+    -   *Input*: `/user_command`
+    -   *Output*: `/task_plan` (ROS 2 custom message, e.g., `vla_system/msg/TaskPlan`)
+4.  **ROS 2 Orchestrator Node**: This is the central executive. It parses the `/task_plan`, translates each step into specific ROS 2 actions or service calls, and manages their sequential execution.
+    -   *Input*: `/task_plan`
+    -   *Outputs*: Calls to Nav2 Action Server (`/navigate_to_pose`), Isaac ROS perception services (e.g., `/detect_object`), and other manipulation services.
+5.  **Perception & Action (Module 3)**:
+    -   **Nav2 Stack**: Executes navigation commands from the Orchestrator, using maps and localization from VSLAM.
+    -   **Isaac ROS Perception**: Provides object detection, pose estimation, or other visual information when requested.
+    -   **Humanoid Control**: Low-level motor control for walking, grasping, etc. (abstracted for this module).
+6.  **Simulation Environment (Module 2)**: Isaac Sim provides the virtual world for the robot to operate in, generating realistic sensor feedback.
+7.  **ROS 2 Runtime (Module 1)**: The underlying middleware connecting all components.
 
-### Our Algorithm of Choice: PPO
-For our project, we will use **Proximal Policy Optimization (PPO)**. PPO is a policy gradient method that has become a go-to algorithm for robotics.
--   **Why PPO?** It strikes a fantastic balance between sample efficiency, ease of implementation, and stability. Unlike some other methods, it avoids taking destructively large steps during training, which is crucial for preventing the learning process from collapsing.
+### Creating the `vla_system` ROS 2 Package
 
----
+First, let's create a dedicated ROS 2 package for our VLA system nodes:
 
-## 4.3 Project Part 1: The Training Environment
-
-Our first step is to build the "digital gym" where our AI will learn. This requires a simulator that is both physically accurate and fast enough for RL.
-
-### The Tools
--   **Simulator: NVIDIA Isaac Sim**: We'll use Isaac Sim, a photorealistic, physically-accurate simulator designed for robotics AI. Its key feature is GPU-accelerated physics, allowing for massive parallelization.
--   **RL Framework: Stable Baselines 3**: A popular, open-source library providing reliable implementations of RL algorithms like PPO.
--   **Environment API: Gymnasium**: The standard API for creating RL environments, allowing our simulator to talk to our RL library.
-
-### Hands-On: Setting up the Isaac Sim Environment
-1.  **Install Isaac Sim**: Follow the official NVIDIA documentation to install Isaac Sim via the Omniverse Launcher. It requires a compatible NVIDIA RTX GPU.
-2.  **Create a Gymnasium Environment**: Isaac Sim provides tools to create environments that follow the `gymnasium` API. We will define a class for our humanoid environment. The core of this class is the `step` function, which defines the perception-action loop.
-
-### Defining the Perception-Action Loop
-Here is the conceptual Python code for our environment's core logic.
-
-```python
-# Conceptual code for our Isaac Sim Gymnasium Environment
-import gymnasium as gym
-from omni.isaac.core.objects import ArticulationView
-import torch
-
-class HumanoidWalkEnv(gym.Env):
-    def __init__(self, physics_dt=1/60.0):
-        # 1. Load the robot (URDF) and configure the scene
-        self._robot = ArticulationView(prim_paths_expr="/World/Robot", name="humanoid_view")
-        # ... (scene setup) ...
-
-        # 2. Define Observation and Action Spaces
-        # Observations: joint positions, velocities, IMU, root velocity, etc.
-        num_obs = 64 
-        # Actions: target positions for each joint motor
-        num_actions = 21 
-        self.observation_space = gym.spaces.Box(low=-torch.inf, high=torch.inf, shape=(num_obs,))
-        self.action_space = gym.spaces.Box(low=-1.0, high=1.0, shape=(num_actions,))
-
-    def step(self, actions):
-        # Apply actions to the robot's joint motors
-        self._robot.set_joint_position_targets(actions * self.motor_effort_scale)
-
-        # Step the physics simulation
-        self._world.step(render=False)
-
-        # --- Calculate Observations and Reward ---
-        # Get new state: joint pos/vel, IMU data, etc.
-        obs = self.compute_observations()
-
-        # Design the reward function - THIS IS THE CRUCIAL PART
-        # - Reward for forward velocity in the x-direction
-        # - Penalty for high energy usage (large joint torques)
-        # - Penalty for lateral deviation
-        # - Large penalty for falling over (e.g., if torso height is too low)
-        reward = (
-            1.5 * self.root_lin_vel[:, 0] # Forward velocity
-            - 0.05 * torch.sum(self.torques**2, dim=1) # Energy penalty
-            - 0.1 * torch.abs(self.root_lin_vel[:, 1]) # Sideways velocity penalty
-        )
-        
-        # Check for termination (falling)
-        terminated = self.torso_height < 0.45
-
-        return obs, reward, terminated, False, {}
-
-    def compute_observations(self):
-        # Collect all sensor data into a single tensor
-        # ... (implementation details) ...
-        pass
-    
-    def reset(self):
-        # Reset the simulation to a starting state
-        # ... (implementation details) ...
-        return self.compute_observations()
-```
-The **reward function** is the most important piece of "code" we write. It is the embodiment of our goal. By carefully designing the rewards and penalties, we guide the learning process toward the desired behavior.
-
----
-
-## 4.4 Project Part 2: The Training Pipeline
-
-With the environment defined, we now bring in the RL agent to learn from it.
-
-### The RL Agent: Our "Mind"
-The agent consists of two parts:
-1.  **The Policy Network**: A neural network (typically a Multi-Layer Perceptron or MLP) that takes an `observation` as input and outputs an `action`. This is the "brain" that we are training.
-2.  **The Algorithm (PPO)**: The `stable-baselines3` library provides the PPO algorithm, which will be responsible for updating the weights of our policy network based on the rewards it receives from the environment.
-
-### Hands-On: The Training Script
-The script to run the training is surprisingly concise, as the libraries handle the heavy lifting.
-```python
-import gymnasium as gym
-from stable_baselines3 import PPO
-import torch
-
-# Our custom Isaac Sim environment
-from humanoid_env import HumanoidWalkEnv 
-
-# 1. Instantiate the environment
-# Isaac Sim's tools allow for creating multiple parallel environments
-# to speed up training, but we'll start with one.
-env = HumanoidWalkEnv()
-
-# 2. Define the policy network architecture
-# An MLP with two hidden layers of 256 neurons each
-policy_kwargs = dict(
-    net_arch=[256, 256]
-)
-
-# 3. Instantiate the PPO Agent
-agent = PPO(
-    "MlpPolicy",
-    env,
-    policy_kwargs=policy_kwargs,
-    verbose=1,
-    n_steps=2048,
-    batch_size=64,
-    gamma=0.99,
-
-    # PPO-specific hyperparameters
-    clip_range=0.2,
-    ent_coef=0.0,
-    learning_rate=3e-4,
-    
-    # Use GPU for training
-    device="cuda"
-)
-
-# 4. Train the agent!
-# This will run for 10 million simulation steps. On a good GPU, this
-# might take a few hours.
-agent.learn(total_timesteps=10_000_000)
-
-# 5. Save the trained policy
-agent.save("ppo_humanoid_walker")
-
-print("Training complete!")
-env.close()
+```bash
+cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python vla_system --dependencies rclpy std_msgs nav2_msgs # Add other message dependencies as needed
 ```
 
-### Running the Training
-When this script is run, you can watch Isaac Sim in real-time. Initially, the robot will flail randomly and fall over constantly. But over millions of steps, as PPO refines the policy network, you will see a coherent and stable walking gait emerge, seemingly from nothing. This is the power of RL.
-
 ---
 
-## 4.5 Project Part 3: Evaluation and Deployment
+## Section 2: From Voice to Text
 
-### Evaluating the Trained Policy
-Once training is complete, we load our saved policy and watch it work.
-```python
-# script_to_evaluate.py
-from stable_baselines3 import PPO
-from humanoid_env import HumanoidWalkEnv
+*(Based on Tasks T2.1, T2.2, T2.3, T2.4)*
 
-env = HumanoidWalkEnv()
-agent = PPO.load("ppo_humanoid_walker")
+The first step in our pipeline is to accurately convert spoken language into text. We will use a simple Python script within a ROS 2 node to achieve this. For the speech-to-text functionality, we can leverage libraries like OpenAI's Whisper model (available via Hugging Face Transformers for local inference).
 
-obs, _ = env.reset()
-for _ in range(5000):
-    # Use deterministic=True for evaluation to get the best action
-    action, _ = agent.predict(obs, deterministic=True)
-    obs, reward, terminated, _, _ = env.step(action)
-    if terminated:
-        obs, _ = env.reset()
-```
-Running this will show your fully trained AI agent controlling the humanoid to walk, a direct result of the emergent behavior learned during training.
+### `speech_to_text_node.py`
 
-### Conceptual Deployment to Hardware
-How do we move this intelligence from the simulator to a real robot?
-The core idea is to create a **ROS 2 node** on the robot's onboard computer that runs the same `subscribe -> predict -> publish` loop.
+This Python script will set up a ROS 2 node that continuously listens for audio input, transcribes it, and publishes the text to a ROS 2 topic.
 
 ```python
-# conceptual_ros2_deployment_node.py
+# vla_system/vla_system/speech_to_text_node.py
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Imu, JointState
-from std_msgs.msg import Float32MultiArray
-from stable_baselines3 import PPO
-import torch
+from std_msgs.msg import String
+import speech_recognition as sr
+import threading
+import time
 
-class DeployNode(Node):
+class SpeechToTextNode(Node):
     def __init__(self):
-        super().__init__('deploy_node')
-        
-        # 1. Load the trained policy
-        self.agent = PPO.load("ppo_humanoid_walker", device='cpu')
+        super().__init__('speech_to_text_node')
+        self.publisher_ = self.create_publisher(String, 'user_command', 10)
+        self.recognizer = sr.Recognizer()
+        self.microphone = sr.Microphone()
+        self.get_logger().info('Speech-to-Text Node started. Listening for commands...')
 
-        # 2. Subscribe to REAL robot sensor topics
-        self.imu_sub = self.create_subscription(Imu, '/imu/data', self.sensor_callback, 10)
-        self.joint_sub = self.create_subscription(JointState, '/joint_states', self.sensor_callback, 10)
-        
-        # 3. Create a publisher for motor commands
-        self.action_pub = self.create_publisher(Float32MultiArray, '/joint_position_controller/commands', 10)
-        
-        # Buffer for sensor data
-        self.latest_obs = None
+        self.listening_thread = threading.Thread(target=self._listen_loop)
+        self.listening_thread.daemon = True
+        self.listening_thread.start()
 
-    def sensor_callback(self, msg):
-        # ...
-        # Code to assemble incoming sensor messages into the observation tensor
-        # This must EXACTLY match the format from the simulation environment!
-        # ...
-        self.latest_obs = assembled_observation_tensor
+    def _listen_loop(self):
+        while rclpy.ok():
+            try:
+                with self.microphone as source:
+                    self.recognizer.adjust_for_ambient_noise(source)
+                    self.get_logger().info("Say something!")
+                    audio = self.recognizer.listen(source, timeout=5, phrase_time_limit=10) # Adjust timeout as needed
+                
+                text = self.recognizer.recognize_google(audio) # Using Google Web Speech API for simplicity
+                # For local Whisper:
+                # from transformers import pipeline
+                # pipe = pipeline("automatic-speech-recognition", model="openai/whisper-tiny.en")
+                # text = pipe(audio.frame_data)["text"]
 
-    def run_inference(self):
-        if self.latest_obs is not None:
-            # 4. Predict the action using the loaded policy
-            action_tensor, _ = self.agent.predict(self.latest_obs, deterministic=True)
-            
-            # 5. Publish the action to the robot's motor controllers
-            action_msg = Float32MultiArray()
-            action_msg.data = action_tensor.tolist()
-            self.action_pub.publish(action_msg)
+                self.get_logger().info(f"You said: '{text}'")
+                msg = String()
+                msg.data = text
+                self.publisher_.publish(msg)
+                time.sleep(1) # Small delay to prevent rapid processing
 
-# Main loop to run the node
+            except sr.WaitTimeoutError:
+                self.get_logger().info("No speech detected. Listening again...")
+                continue
+            except sr.UnknownValueError:
+                self.get_logger().warn("Could not understand audio")
+            except sr.RequestError as e:
+                self.get_logger().error(f"Could not request results from Google Speech Recognition service; {e}")
+            except Exception as e:
+                self.get_logger().error(f"An unexpected error occurred: {e}")
+                time.sleep(1)
+
+
 def main(args=None):
     rclpy.init(args=args)
-    node = DeployNode()
-    # Create a timer to run inference at a fixed rate (e.g., 50Hz)
-    timer = node.create_timer(1.0/50.0, node.run_inference)
+    node = SpeechToTextNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Launch File for Speech-to-Text
+
+To run this node, create a launch file:
+
+```python
+# vla_system/launch/speech_to_text_launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='vla_system',
+            executable='speech_to_text_node',
+            name='speech_to_text',
+            output='screen',
+            emulate_tty=True
+        )
+    ])
+```
+
+Test it: `ros2 launch vla_system speech_to_text_launch.py`. Speak into your microphone and observe the output in the terminal.
+
+---
+
+## Section 3: The LLM as a Cognitive Planner
+
+*(Based on Tasks T3.1, T3.2, T3.3, T3.4, T3.5)*
+
+The LLM acts as the robot's high-level brain, translating abstract human commands into a structured, executable plan.
+
+### Prompt Engineering for Robotics
+
+The key is the "system prompt" or "context prompt." This tells the LLM:
+-   **Who it is**: "You are a helpful robot assistant."
+-   **What its capabilities are**: A list of available actions (functions) and their parameters.
+-   **What its goal is**: To generate a structured JSON plan.
+
+### System Prompt Example (Conceptual)
+
+```yaml
+# system_prompt.yaml
+system_prompt: |
+  You are an autonomous humanoid robot assistant.
+  Your goal is to fulfill user commands by generating a sequence of actions.
+  You have the following capabilities:
+
+  - navigate_to(location: string): Navigates the robot to a specified location (e.g., "kitchen", "living_room").
+  - find_object(object_name: string, color: string = "any"): Uses vision to find an object with a given name and optional color. Returns object_id (string).
+  - pick_up(object_id: string): Grasps the specified object.
+  - place_object(location: string = "current_location"): Places the held object at a specified location.
+
+  Generate a JSON array of actions for the user's command. Respond ONLY with JSON.
+  Example: User command: "Go to the kitchen and find the red apple."
+  Response:
+  ```json
+  [
+    {"action": "navigate_to", "parameters": {"location": "kitchen"}},
+    {"action": "find_object", "parameters": {"object_name": "apple", "color": "red"}}
+  ]
+  ```
+
+user_command_prefix: "User command: "
+```
+
+### `llm_planner_node.py`
+
+This node will subscribe to the `/user_command` topic, send the combined prompt to an LLM (e.g., through an API or a local server), and publish the resulting structured plan.
+
+```python
+# vla_system/vla_system/llm_planner_node.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+import json
+import os
+import requests # For API calls
+
+# Define a custom message type for TaskPlan
+# Create vla_system/msg/TaskPlan.msg:
+# string plan_id
+# string[] actions_json # Each element is a JSON string of an action
+
+class LLMPlannerNode(Node):
+    def __init__(self):
+        super().__init__('llm_planner_node')
+        self.subscription = self.create_subscription(
+            String,
+            'user_command',
+            self.command_callback,
+            10)
+        self.publisher_ = self.create_publisher(String, 'task_plan', 10) # Publishing as String for simplicity
+        # For actual TaskPlan custom message, need:
+        # from vla_system.msg import TaskPlan
+        # self.publisher_ = self.create_publisher(TaskPlan, 'task_plan', 10)
+
+        self.system_prompt = self._load_system_prompt()
+        self.llm_api_endpoint = os.getenv('LLM_API_ENDPOINT', 'http://localhost:8000/v1/chat/completions') # Example for local LLM
+        self.get_logger().info(f"LLM Planner Node started. LLM Endpoint: {self.llm_api_endpoint}")
+
+    def _load_system_prompt(self):
+        # Load system prompt from a file or directly define
+        return """
+        You are an autonomous humanoid robot assistant.
+        Your goal is to fulfill user commands by generating a sequence of actions.
+        You have the following capabilities:
+
+        - navigate_to(location: string): Navigates the robot to a specified location (e.g., \"kitchen\", \"living_room\").
+        - find_object(object_name: string, color: string = \"any\"): Uses vision to find an object with a given name and optional color. Returns object_id (string).
+        - pick_up(object_id: string): Grasps the specified object.
+        - place_object(location: string = \"current_location\"): Places the held object at a specified location.
+
+        Generate a JSON array of actions for the user's command. Respond ONLY with JSON.
+        Example: User command: \"Go to the kitchen and find the red apple.\"
+        Response:
+        ```json
+        [
+          {\"action\": \"navigate_to\", \"parameters\": {\"location\": \"kitchen\"}},
+          {\"action\": \"find_object\", \"parameters\": {\"object_name\": \"apple\", \"color\": \"red\"}}
+        ]
+        ```
+        """
+
+    def command_callback(self, msg):
+        user_command = msg.data
+        self.get_logger().info(f"Received user command: '{user_command}'")
+
+        full_prompt = f"{self.system_prompt}\nUser command: {user_command}"
+        
+        try:
+            # Replace with actual LLM API call
+            response = requests.post(
+                self.llm_api_endpoint,
+                headers={"Content-Type": "application/json"},
+                json={
+                    "messages": [
+                        {"role": "system", "content": self.system_prompt},
+                        {"role": "user", "content": user_command}
+                    ],
+                    "max_tokens": 500
+                }
+            )
+            response.raise_for_status()
+            
+            # Assuming LLM returns a JSON string directly in content
+            llm_response_content = response.json()['choices'][0]['message']['content']
+            
+            # Extract JSON from potential markdown code block
+            if llm_response_content.startswith("```json"):
+                llm_response_content = llm_response_content.replace("```json\n", "").replace("\n```", "")
+            
+            task_plan = json.loads(llm_response_content)
+            self.get_logger().info(f"LLM generated plan: {json.dumps(task_plan, indent=2)}")
+
+            # Validate plan structure (simple check)
+            if not isinstance(task_plan, list) or not all('action' in step for step in task_plan):
+                raise ValueError("Invalid plan structure from LLM")
+
+            plan_msg = String() # Using String for plan, could be custom TaskPlan
+            plan_msg.data = json.dumps(task_plan)
+            self.publisher_.publish(plan_msg)
+
+        except requests.exceptions.RequestException as e:
+            self.get_logger().error(f"LLM API request failed: {e}")
+        except json.JSONDecodeError as e:
+            self.get_logger().error(f"Failed to parse LLM response as JSON: {e}\nResponse content: {llm_response_content}")
+        except ValueError as e:
+            self.get_logger().error(f"Plan validation failed: {e}")
+        except Exception as e:
+            self.get_logger().error(f"An unexpected error occurred in LLM planner: {e}")
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = LLMPlannerNode()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
 ```
-This is the final step where the simulated "mind" is connected to a real "body," completing the full pipeline of a modern Embodied AI system. Bridging the **sim-to-real gap** often requires further techniques like **domain randomization** (randomizing physics properties in the sim) to make the policy more robust, but the fundamental architecture remains the same.
+*Note: This example uses `requests` for an external LLM API. For local models, you might integrate with a local server like `llama.cpp` or directly with a Python library.*
 
 ---
 
-## 4.6 Conclusion: The Future is Embodied
+## Section 4: The ROS 2 Orchestrator
 
-Congratulations. You have journeyed from the first principles of robotics to designing, training, and deploying a learning-based controller for a humanoid robot. You have seen how hardware (sensors, actuators), software (ROS), simulation (Isaac Sim), and artificial intelligence (RL) integrate into a single, powerful system.
+*(Based on Tasks T4.1, T4.2, T4.3, T4.4, T4.5)*
 
-The path you have followed in this book mirrors the path of the robotics field itself. The future of AI is not just in the cloud; it is here, in the physical world. It is embodied, interactive, and learning. The skills you have acquired are the foundation for contributing to this future, building the next generation of machines that can walk, work, and learn alongside us. The journey is just beginning.
+The Orchestrator node is the action manager. It takes the LLM's structured plan and translates each step into calls to the appropriate ROS 2 actions and services.
+
+```python
+# vla_system/vla_system/orchestrator_node.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from rclpy.action import ActionClient
+from nav2_msgs.action import NavigateToPose
+import json
+import time
+import threading
+
+# For the custom TaskPlan message if used:
+# from vla_system.msg import TaskPlan # Assuming custom TaskPlan message type
+# from vla_system.srv import FindObject # Assuming custom FindObject service type
+
+class OrchestratorNode(Node):
+    def __init__(self):
+        super().__init__('orchestrator_node')
+        self.subscription = self.create_subscription(
+            String, # Assuming plan is published as String
+            'task_plan',
+            self.plan_callback,
+            10)
+        
+        self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+        # self.find_object_client = self.create_client(FindObject, 'find_object_service') # Example service client
+
+        self.current_plan = []
+        self.plan_active = False
+        self.get_logger().info('Orchestrator Node started.')
+
+    def plan_callback(self, msg):
+        if self.plan_active:
+            self.get_logger().warn("New plan received while another plan is active. Ignoring.")
+            return
+
+        try:
+            plan_data = json.loads(msg.data)
+            self.current_plan = plan_data
+            self.plan_active = True
+            self.get_logger().info(f"Received new plan with {len(self.current_plan)} steps. Starting execution.")
+            self._execute_plan_thread = threading.Thread(target=self._execute_plan)
+            self._execute_plan_thread.daemon = True
+            self._execute_plan_thread.start()
+        except json.JSONDecodeError as e:
+            self.get_logger().error(f"Failed to parse task plan JSON: {e}")
+            self.plan_active = False
+
+    def _execute_plan(self):
+        for i, step in enumerate(self.current_plan):
+            action_name = step.get('action')
+            parameters = step.get('parameters', {})
+            self.get_logger().info(f"Executing step {i+1}: {action_name} with params {parameters}")
+
+            if action_name == 'navigate_to':
+                self._execute_navigate_to(parameters)
+            elif action_name == 'find_object':
+                self._execute_find_object(parameters)
+            elif action_name == 'pick_up':
+                self.get_logger().info(f"Simulating pick_up of {parameters.get('object_id', 'unknown object')}")
+                time.sleep(3) # Simulate action duration
+            elif action_name == 'place_object':
+                self.get_logger().info(f"Simulating place_object at {parameters.get('location', 'current_location')}")
+                time.sleep(2) # Simulate action duration
+            else:
+                self.get_logger().warn(f"Unknown action: {action_name}. Skipping.")
+
+            if not self.plan_active: # Check if plan was cancelled externally
+                self.get_logger().info("Plan execution interrupted.")
+                break
+        
+        self.get_logger().info("Plan execution completed.")
+        self.plan_active = False
+        self.current_plan = []
+
+    def _execute_navigate_to(self, params):
+        goal_location = params.get('location')
+        if not goal_location:
+            self.get_logger().error("NavigateToPose: 'location' parameter missing.")
+            return False
+        
+        # This part requires a mapping of location names to actual poses.
+        # For capstone, this could be hardcoded or retrieved from a map service.
+        pose = self._get_pose_for_location(goal_location) 
+        if not pose:
+            self.get_logger().error(f"NavigateToPose: Unknown location '{goal_location}'")
+            return False
+
+        goal_msg = NavigateToPose.Goal()
+        goal_msg.pose.header.frame_id = 'map'
+        goal_msg.pose.pose = pose
+
+        self.get_logger().info(f"Navigating to {goal_location}...")
+        self.nav_to_pose_client.wait_for_server()
+        future = self.nav_to_pose_client.send_goal_async(goal_msg)
+        rclpy.spin_until_future_complete(self, future)
+        goal_handle = future.result()
+
+        if not goal_handle.accepted:
+            self.get_logger().error('Goal rejected :(\n')
+            return False
+
+        self.get_logger().info('Goal accepted :)
+')
+        result_future = goal_handle.get_result_async()
+        rclpy.spin_until_future_complete(self, result_future)
+        result = result_future.result().result
+        self.get_logger().info(f'Navigation result: {result.total_time}') # Example result access
+        return True
+
+    def _execute_find_object(self, params):
+        object_name = params.get('object_name')
+        object_color = params.get('color', 'any')
+        if not object_name:
+            self.get_logger().error("FindObject: 'object_name' parameter missing.")
+            return False
+        
+        self.get_logger().info(f"Searching for {object_color} {object_name}...")
+        # Simulate calling a perception service
+        time.sleep(5) # Simulate vision processing
+        # In a real system, this would call a ROS 2 service (e.g., from Isaac ROS)
+        # and receive object_id or coordinates.
+        self.get_logger().info(f"Found mock {object_color} {object_name}. Object ID: mock_obj_123")
+        return True
+
+    def _get_pose_for_location(self, location_name):
+        # Placeholder: In a real system, this would come from a map or configuration
+        if location_name == 'kitchen':
+            from geometry_msgs.msg import Pose
+            pose = Pose()
+            pose.position.x = 5.0
+            pose.position.y = 0.0
+            pose.orientation.w = 1.0
+            return pose
+        elif location_name == 'living_room':
+            from geometry_msgs.msg import Pose
+            pose = Pose()
+            pose.position.x = 0.0
+            pose.position.y = 5.0
+            pose.orientation.w = 1.0
+            return pose
+        return None
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = OrchestratorNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+---
+
+## Section 5: Assembling and Running the Full System (Capstone Project)
+
+*(Based on Tasks T5.1, T5.2, T5.3, T5.4, T5.5, T5.6, T5.7)*
+
+The capstone project brings everything together. We will launch Isaac Sim, our Module 3 perception and navigation stack, and the new VLA nodes (Speech-to-Text, LLM Planner, Orchestrator) in a single, cohesive system.
+
+### The Master `capstone.launch.py`
+
+This launch file orchestrates the entire system. It includes launch files from Module 3 for Isaac Sim, VSLAM, and Nav2, plus our new VLA nodes.
+
+```python
+# vla_system/launch/capstone_launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    pkg_vla_system = get_package_share_directory('vla_system')
+    pkg_isaac_ros_nav = get_package_share_directory('isaac_ros_nav') # Placeholder for Module 3 nav/perception launch
+
+    return LaunchDescription([
+        # 1. Launch Isaac Sim and Humanoid (Module 2/3 Integration)
+        # This would typically be a complex launch, possibly a Docker container.
+        # For simplicity, assume a separate Isaac Sim instance is running or launched by a script.
+        # Example: IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        #     os.path.join(pkg_isaac_ros_nav, 'launch', 'isaac_sim_humanoid.launch.py')
+        # )),
+
+        # 2. Launch Module 3 (Perception & Navigation Stack: VSLAM, Nav2)
+        # Example: IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        #     os.path.join(pkg_isaac_ros_nav, 'launch', 'humanoid_nav_stack.launch.py')
+        # )),
+
+        # 3. Launch VLA Nodes
+        Node(
+            package='vla_system',
+            executable='speech_to_text_node',
+            name='speech_to_text',
+            output='screen',
+            emulate_tty=True
+        ),
+        Node(
+            package='vla_system',
+            executable='llm_planner_node',
+            name='llm_planner',
+            output='screen',
+            emulate_tty=True
+            # parameters=[{'system_prompt_path': os.path.join(pkg_vla_system, 'config', 'system_prompt.yaml')}]
+        ),
+        Node(
+            package='vla_system',
+            executable='orchestrator_node',
+            name='orchestrator',
+            output='screen',
+            emulate_tty=True
+        )
+    ])
+```
+
+### Running the Capstone Scenario
+
+1.  **Start Isaac Sim**: Manually launch Isaac Sim with your humanoid robot and environment.
+2.  **Launch the System**: `ros2 launch vla_system capstone_launch.py`
+3.  **Speak a Command**: Use your microphone and say a command, e.g., "Navigate to the kitchen."
+4.  **Observe**: Watch the robot in Isaac Sim (and RViz2) as it executes the plan.
+
+### Debugging and Observability
+
+A complex system like this requires robust debugging.
+-   **`ros2 topic echo <topic_name>`**: Monitor message flow (`/user_command`, `/task_plan`).
+-   **`ros2 action list` / `ros2 action info <action_name>`**: Check status of Nav2 actions.
+-   **RViz2**: Visualize the robot's pose, Nav2 path, and VSLAM map.
+-   **Node Logs**: Monitor the output of each VLA node for errors or status updates.
+
+### Safety and Interpretability
+
+LLM-driven systems introduce new safety concerns.
+-   **Plan Validation**: The Orchestrator should include sanity checks on the LLM's plan (e.g., are all locations valid? Is the object type recognizable?).
+-   **Human Override**: Always have a clear way to stop the robot.
+-   **Explainability**: Log LLM prompts and responses to understand *why* the robot chose a particular plan.
+
+---
+
+### Capstone Milestones:
+
+-   **Milestone 1**: User speaks "go to the kitchen." Robot successfully navigates to the kitchen using Nav2.
+-   **Milestone 2**: User speaks "find the red apple." Robot navigates to an area (e.g., table) and uses its perception system to locate and point towards the red apple.
+-   **Milestone 3**: User speaks "pick up the red apple." Robot performs all necessary steps, including a simulated grasping action.
+    *(Note: The actual grasping action implementation is abstracted, as it involves complex inverse kinematics beyond this module's scope, but the orchestration is the focus.)*
