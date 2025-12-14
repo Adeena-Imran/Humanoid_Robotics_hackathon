@@ -1,5 +1,5 @@
 ---
-sid ebar_position: 4
+sidebar_position: 4
 ---
 
 # Module 4: Vision-Language-Action (VLA)
@@ -70,11 +70,11 @@ import time
 
 class SpeechToTextNode(Node):
     def __init__(self):
-        super().__init__('speech_to_text_node')
-        self.publisher_ = self.create_publisher(String, 'user_command', 10)
+        super().__init__(\'speech_to_text_node\'
+        self.publisher_ = self.create_publisher(String, \'user_command\', 10)
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
-        self.get_logger().info('Speech-to-Text Node started. Listening for commands...')
+        self.get_logger().info(\'Speech-to-Text Node started. Listening for commands...\'
 
         self.listening_thread = threading.Thread(target=self._listen_loop)
         self.listening_thread.daemon = True
@@ -138,10 +138,10 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='vla_system',
-            executable='speech_to_text_node',
-            name='speech_to_text',
-            output='screen',
+            package=\'vla_system\',
+            executable=\'speech_to_text_node\',
+            name=\'speech_to_text\',
+            output=\'screen\',
             emulate_tty=True
         )
     ])
@@ -155,7 +155,7 @@ Test it: `ros2 launch vla_system speech_to_text_launch.py`. Speak into your micr
 
 *(Based on Tasks T3.1, T3.2, T3.3, T3.4, T3.5)*
 
-The LLM acts as the robot's high-level brain, translating abstract human commands into a structured, executable plan.
+The LLM acts as the robot\'s high-level brain, translating abstract human commands into a structured, executable plan.
 
 ### Prompt Engineering for Robotics
 
@@ -173,13 +173,13 @@ system_prompt: |
   Your goal is to fulfill user commands by generating a sequence of actions.
   You have the following capabilities:
 
-  - navigate_to(location: string): Navigates the robot to a specified location (e.g., "kitchen", "living_room").
-  - find_object(object_name: string, color: string = "any"): Uses vision to find an object with a given name and optional color. Returns object_id (string).
+  - navigate_to(location: string): Navigates the robot to a specified location (e.g., \"kitchen\", \"living_room\").
+  - find_object(object_name: string, color: string = \"any\"): Uses vision to find an object with a given name and optional color. Returns object_id (string).
   - pick_up(object_id: string): Grasps the specified object.
-  - place_object(location: string = "current_location"): Places the held object at a specified location.
+  - place_object(location: string = \"current_location\"): Places the held object at a specified location.
 
-  Generate a JSON array of actions for the user's command. Respond ONLY with JSON.
-  Example: User command: "Go to the kitchen and find the red apple."
+  Generate a JSON array of actions for the user\'s command. Respond ONLY with JSON.
+  Example: User command: \"Go to the kitchen and find the red apple.\"
   Response:
   ```json
   [
@@ -211,13 +211,13 @@ import requests # For API calls
 
 class LLMPlannerNode(Node):
     def __init__(self):
-        super().__init__('llm_planner_node')
+        super().__init__(\'llm_planner_node\')
         self.subscription = self.create_subscription(
             String,
-            'user_command',
+            \'user_command\',
             self.command_callback,
             10)
-        self.publisher_ = self.create_publisher(String, 'task_plan', 10) # Publishing as String for simplicity
+        self.publisher_ = self.create_publisher(String, \'task_plan\', 10) # Publishing as String for simplicity
         # For actual TaskPlan custom message, need:
         # from vla_system.msg import TaskPlan
         # self.publisher_ = self.create_publisher(TaskPlan, 'task_plan', 10)
@@ -238,7 +238,7 @@ class LLMPlannerNode(Node):
         - pick_up(object_id: string): Grasps the specified object.
         - place_object(location: string = \"current_location\"): Places the held object at a specified location.
 
-        Generate a JSON array of actions for the user's command. Respond ONLY with JSON.
+        Generate a JSON array of actions for the user\'s command. Respond ONLY with JSON.
         Example: User command: \"Go to the kitchen and find the red apple.\"
         Response:
         ```json
@@ -315,7 +315,7 @@ if __name__ == '__main__':
 
 *(Based on Tasks T4.1, T4.2, T4.3, T4.4, T4.5)*
 
-The Orchestrator node is the action manager. It takes the LLM's structured plan and translates each step into calls to the appropriate ROS 2 actions and services.
+The Orchestrator node is the action manager. It takes the LLM\'s structured plan and translates each step into calls to the appropriate ROS 2 actions and services.
 
 ```python
 # vla_system/vla_system/orchestrator_node.py
@@ -334,14 +334,14 @@ import threading
 
 class OrchestratorNode(Node):
     def __init__(self):
-        super().__init__('orchestrator_node')
+        super().__init__(\'orchestrator_node\')
         self.subscription = self.create_subscription(
             String, # Assuming plan is published as String
-            'task_plan',
+            \'task_plan\',
             self.plan_callback,
             10)
         
-        self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+        self.nav_to_pose_client = ActionClient(self, NavigateToPose, \'navigate_to_pose\')
         # self.find_object_client = self.create_client(FindObject, 'find_object_service') # Example service client
 
         self.current_plan = []
@@ -406,7 +406,7 @@ class OrchestratorNode(Node):
             return False
 
         goal_msg = NavigateToPose.Goal()
-        goal_msg.pose.header.frame_id = 'map'
+        goal_msg.pose.header.frame_id = \'map\'
         goal_msg.pose.pose = pose
 
         self.get_logger().info(f"Navigating to {goal_location}...")
@@ -416,10 +416,12 @@ class OrchestratorNode(Node):
         goal_handle = future.result()
 
         if not goal_handle.accepted:
-            self.get_logger().error('Goal rejected :(\n')
+            self.get_logger().error('Goal rejected :(
+')
             return False
 
-        self.get_logger().info('Goal accepted :)')
+        self.get_logger().info('Goal accepted :)
+')
         result_future = goal_handle.get_result_async()
         rclpy.spin_until_future_complete(self, result_future)
         result = result_future.result().result
@@ -547,15 +549,15 @@ def generate_launch_description():
 ### Debugging and Observability
 
 A complex system like this requires robust debugging.
--   **`ros2 topic echo <topic_name>`**: Monitor message flow (`/user_command`, `/task_plan`).
--   **`ros2 action list` / `ros2 action info <action_name>`**: Check status of Nav2 actions.
--   **RViz2**: Visualize the robot's pose, Nav2 path, and VSLAM map.
--   **Node Logs**: Monitor the output of each VLA node for errors or status updates.
+-   `ros2 topic echo <topic_name>`: Monitor message flow (`/user_command`, `/task_plan`).
+-   `ros2 action list` / `ros2 action info <action_name>`: Check status of Nav2 actions.
+-   `RViz2`: Visualize the robot's pose, Nav2 path, and VSLAM map.
+-   `Node Logs`: Monitor the output of each VLA node for errors or status updates.
 
 ### Safety and Interpretability
 
 LLM-driven systems introduce new safety concerns.
--   **Plan Validation**: The Orchestrator should include sanity checks on the LLM's plan (e.g., are all locations valid? Is the object type recognizable?).
+-   **Plan Validation**: The Orchestrator should include sanity checks on the LLM\'s plan (e.g., are all locations valid? Is the object type recognizable?).
 -   **Human Override**: Always have a clear way to stop the robot.
 -   **Explainability**: Log LLM prompts and responses to understand *why* the robot chose a particular plan.
 
@@ -566,4 +568,4 @@ LLM-driven systems introduce new safety concerns.
 -   **Milestone 1**: User speaks "go to the kitchen." Robot successfully navigates to the kitchen using Nav2.
 -   **Milestone 2**: User speaks "find the red apple." Robot navigates to an area (e.g., table) and uses its perception system to locate and point towards the red apple.
 -   **Milestone 3**: User speaks "pick up the red apple." Robot performs all necessary steps, including a simulated grasping action.
-    *(Note: The actual grasping action implementation is abstracted, as it involves complex inverse kinematics beyond this module's scope, but the orchestration is the focus.)*
+    *(Note: The actual grasping action implementation is abstracted, as it involves complex inverse kinematics beyond this module\'s scope, but the orchestration is the focus.)*

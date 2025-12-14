@@ -1,6 +1,6 @@
 # Feature Specification: Authentication Backend
 
-**Feature Branch**: `004-auth-backend`
+**Feature Branch**: `005-auth-backend`
 **Created**: 2025-12-07
 **Status**: Draft
 **Input**: User description: "Create a simple authentication backend for the humanoid_roboti

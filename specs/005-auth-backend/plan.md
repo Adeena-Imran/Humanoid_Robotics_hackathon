@@ -1,8 +1,8 @@
 # Implementation Plan: Authentication Backend
 
-**Branch**: `004-auth-backend` | **Date**: 2025-12-07 | **Spec**: specs/004-auth-backend/spe
+**Branch**: `005-auth-backend` | **Date**: 2025-12-07 | **Spec**: specs/005-auth-backend/spe
 c.md
-**Input**: Feature specification from `/specs/004-auth-backend/spec.md`
+**Input**: Feature specification from `/specs/005-auth-backend/spec.md`
 
 **Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/comm
 ands/plan.md` for the execution workflow.
