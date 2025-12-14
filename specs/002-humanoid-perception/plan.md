@@ -1,123 +1,83 @@
-# Implementation Plan: [FEATURE]
+# Learning Plan: Module 2 - The Digital Twin (Gazebo & Unity)
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Feature**: `002-the-digital-twin`
+**Status**: Draft
 
-**Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+This plan outlines the learning progression for Module 2, focusing on creating and utilizing digital twins for humanoid robotics. The structure is designed to build a strong foundation in physics-based simulation before exploring advanced visualization and sim-to-real concepts.
 
-## Summary
+## 1. Architectural Vision
 
-[Extract from feature spec: primary requirement + technical approach from research]
+This module positions simulation as an indispensable tool in the robotics development lifecycle. The goal is to empower the reader to build, test, and iterate on robotic systems in a virtual environment safely and efficiently. By the end of this module, the reader will be able to create a digital twin of a humanoid robot, simulate its interaction with a virtual world using Gazebo, visualize it with high fidelity in Unity, and understand the critical process of bridging the "reality gap." This plan connects the `spec.md` requirements to the actionable `tasks.md`.
 
-## Technical Context
+## 2. Progressive Learning Sections
 
-**Language/Version**: JavaScript (ES6+) with React for interactive components. Not directly applicable for static MDX content.  
-**Primary Dependencies**: Docusaurus (for content rendering). For 3D sensor visualizations (`three.js`), for 2D image processing (`Canvas` API with `OpenCV.js`), for IMU plots (`Chart.js` or `Recharts`).  
-**Storage**: Static files within the Docusaurus project. Client-side processing of small, embedded datasets. No dynamic storage for user progress or user-generated data for initial implementation.  
-**Testing**: Docusaurus build process validation, MDX content linting, broken link checking. Unit/integration tests for interactive components.  
-**Target Platform**: Web browsers (via Docusaurus generated site).  
-**Project Type**: Web application (Docusaurus educational module).  
-**Performance Goals**: Fast page load times (under 2 seconds for primary content). Smooth interaction (target 30-60 FPS for 3D simulations). Interaction latency <50ms. Memory usage <500MB.  
-**Constraints**: Must adhere to Docusaurus MDX formatting and best practices. Content must be accessible (WCAG 2.1 AA compliant).  
-**Scale/Scope**: An educational module for an unspecified number of students. Interactive elements are client-side; static hosting scalability. No specific server-side concurrency or peak usage metrics for interactive elements.
+The module will be divided into the following sections, ensuring a logical flow from core concepts to advanced applications.
 
-## Constitution Check
+### Section 1: Foundations of Robotics Simulation
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+-   **Objective**: Introduce the "why" and "what" of simulation and digital twins.
+-   **Key Topics**:
+    -   The concept of a Digital Twin in robotics.
+    -   Benefits: Safe testing, rapid prototyping, parallel experimentation, and data generation.
+    -   Overview of the simulation ecosystem: Physics engine (Gazebo) vs. High-fidelity renderer (Unity).
+    -   Introduction to SDF (Simulation Description Format) and its relationship with URDF.
+-   **Humanoid Context**: Frame the digital twin as a virtual crash-test dummy, allowing for complex gait and balance algorithms to be tested without risking expensive hardware.
 
-### I. Accurate, Structured, and High-Quality Educational Content
-- [x] The specification emphasizes clear learning objectives, key concepts, chapter structure, exercises, and assessment criteria, all contributing to high-quality educational content.
+### Section 2: Physics-Based Simulation with Gazebo
 
-### II. Docusaurus Optimization
-- [x] The "Target Platform" in the Technical Context specifies "Web browsers (via Docusaurus generated site)", and the "Constraints" include "Must adhere to Docusaurus MDX formatting and best practices."
+-   **Objective**: Provide hands-on skills for simulating robots and environments in Gazebo.
+-   **Key Topics**:
+    -   **Gazebo Architecture**: Worlds, models, plugins.
+    -   **World Building**: Creating static environments with lighting, terrain, and simple objects.
+    -   **Spawning a Humanoid**: Importing a URDF/SDF model into a Gazebo world.
+    -   **Physics Properties**: Simulating gravity, contact forces, friction, and collision dynamics.
+    -   **ROS 2 Integration**: Using the `ros_gz_bridge` to pass messages between Gazebo and ROS 2 nodes.
+-   **Diagrams**: Illustrate the Gazebo-ROS 2 communication architecture.
+-   **Humanoid Context**: A practical tutorial on making a humanoid robot stand and fall under gravity in Gazebo, demonstrating the application of physics.
 
-### III. Modularity, Scalability, and Reusability
-- [x] The module is designed as a standalone unit, promoting modularity. The content structure allows for potential reuse in other contexts. Scalability for content delivery (Docusaurus) is inherent.
+### Section 3: Simulating the Senses
 
-### IV. Clarity, Correctness, and Explainability
-- [x] The specification itself is clear, and the requirements for the module emphasize these qualities.
+-   **Objective**: Equip the reader to simulate common robotic sensors to test perception systems.
+-   **Key Topics**:
+    -   The importance of sensor simulation for perception development.
+    -   **Simulating Cameras**: Generating RGB and depth camera image streams.
+    -   **Simulating LiDAR**: Creating 3D point cloud data.
+    -   **Simulating IMUs**: Generating data for orientation and acceleration.
+    -   **Adding Noise**: Configuring sensor plugins to produce more realistic, noisy data.
+-   **ROS 2 Integration**: Show how simulated sensor data is published on ROS 2 topics, making it indistinguishable from real hardware to the rest of the ROS graph.
 
-### V. Safety
-- [x] The content is educational and technical, with no inherent safety concerns.
+### Section 4: High-Fidelity Visualization with Unity
 
-### Agent Coordination Rules
-- [x] The module specification doesn't directly involve agent coordination but aligns with project goals.
+-   **Objective**: Introduce Unity for advanced rendering and human-robot interaction (HRI).
+-   **Key Topics**:
+    -   Setting up the Unity environment for robotics.
+    -   Using the `ROS-TCP-Connector` to link Unity with a ROS 2 network.
+    -   Importing robot models and environments for photorealistic rendering.
+    -   Developing simple HRI scenarios (e.g., creating a UI to send goals to the robot).
+-   **Diagrams**: Show the Unity-ROS 2 communication flow via the TCP connector.
+-   **Humanoid Context**: Create a visually appealing simulation where a user can interact with the humanoid in a realistic home environment, contrasting with Gazebo's function-over-form approach.
 
-### Output Standards
-- [x] The module design aims for Docusaurus-friendly Markdown, headings, examples, technical accuracy, and beginner-friendliness.
+### Section 5: Bridging the Reality Gap (Sim-to-Real)
 
-### MCP Integration Rule
-- [x] The specification targets `docs/module-X.mdx` compatibility.
+-   **Objective**: Address the critical challenge of making simulation results transferable to the real world.
+-   **Key Topics**:
+    -   Defining the "reality gap": Why simulations never perfectly match reality.
+    -   Common sources of divergence: Imperfect physics models, sensor noise differences, network latency.
+    -   Strategies for mitigation:
+        -   **System Identification**: Measuring real-world parameters to tune the simulation.
+        -   **Domain Randomization**: Intentionally varying simulation parameters (e.g., friction, lighting) to train more robust models.
+-   **Humanoid Context**: Discuss the specific challenges of simulating bipedal locomotion, where small errors in friction or contact modeling can have a dramatic impact.
 
-### High-Level Project Purpose
-- [x] The module directly contributes to the creation of the "Humanoid Robotics" textbook.
+## 3. Risk Analysis
 
-## Project Structure
+-   **Risk**: The reader gets bogged down in the complex setup of Gazebo, Unity, and their respective ROS 2 integrations.
+    -   **Mitigation**: Provide a pre-configured Docker environment that includes all necessary software. Offer clear, step-by-step tutorials for each setup process.
+-   **Risk**: The distinction between Gazebo and Unity's roles becomes confusing.
+    -   **Mitigation**: Use a clear and consistent analogy (e.g., "Gazebo is the physics lab, Unity is the film set") and dedicate a section to explicitly comparing their strengths and weaknesses.
 
-### Documentation (this feature)
+## 4. Definition of Done
 
-```text
-specs/[###-feature]/
-├── plan.md              # This file (/sp.plan command output)
-├── research.md          # Phase 0 output (/sp.plan command)
-├── data-model.md        # Phase 1 output (/sp.plan command)
-├── quickstart.md        # Phase 1 output (/sp.plan command)
-├── contracts/           # Phase 1 output (/sp.plan command)
-└── tasks.md             # Phase 2 output (/sp.tasks command - NOT created by /sp.plan)
-```
-
-### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
-
-```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
-```
-
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
-
-## Complexity Tracking
-
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+The plan is considered complete when:
+-   All sections align with the learning outcomes in the updated `spec.md`.
+-   Each section provides a clear path for generating implementation tasks in `tasks.md`.
+-   The plan has been reviewed and approved.
