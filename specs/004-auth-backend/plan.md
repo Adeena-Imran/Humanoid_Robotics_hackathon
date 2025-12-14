@@ -1,72 +1,93 @@
-# Implementation Plan: Authentication Backend
+# Learning Plan: Module 4 - Vision-Language-Action (VLA)
 
-**Branch**: `004-auth-backend` | **Date**: 2025-12-07 | **Spec**: specs/004-auth-backend/spec.md
-**Input**: Feature specification from `/specs/004-auth-backend/spec.md`
+**Feature**: `004-vision-language-action`
+**Status**: Draft
 
-**Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+This plan outlines the learning progression for the capstone module, which integrates all concepts from Modules 1-3 to build an end-to-end autonomous system capable of understanding natural language commands and executing them in a simulated world.
 
-## Summary
+## 1. Architectural Vision
 
-Create a simple authentication backend for the humanoid_robotics_book project with user signup, login, and JWT access tokens. This will be implemented using Node.js + Express, Prisma ORM with PostgreSQL, bcrypt for password hashing, and jsonwebtoken for JWTs.
+This module is the culmination of the entire book. We will assemble the final "cognitive layer" of our humanoid robot, enabling it to process spoken commands, formulate a plan, and execute it using the ROS 2, simulation, and perception systems we've already built. The architectural focus is on system integration and orchestration, demonstrating how a Large Language Model (LLM) can act as a "brain," connecting language to perception and action. This plan bridges the high-level goals of the capstone project in `spec.md` to the concrete implementation steps in `tasks.md`.
 
-## Technical Context
+## 2. Progressive Learning Sections: Building the Capstone
 
-**Language/Version**: Node.js 20+, Express 4.x
-**Primary Dependencies**: Prisma ORM, PostgreSQL, bcrypt, jsonwebtoken
-**Storage**: PostgreSQL (or SQLite for dev)
-**Testing**: Jest (or similar, e.g., Vitest)
-**Target Platform**: Linux server
-**Project Type**: Web application (backend)
-**Performance Goals**: <500ms for signup/login
-**Constraints**: <200ms for error responses, no email verification, no refresh tokens, no rate limiting
-**Scale/Scope**: minimal, simple authentication module for beginners (approx. 1k users)
+The module will be structured as a step-by-step guide to building and running the final capstone project.
 
-## Constitution Check
+### Section 1: The End-to-End VLA Pipeline
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+-   **Objective**: Present a high-level overview of the complete Vision-Language-Action architecture.
+-   **Key Topics**:
+    -   **The Goal**: From "Bring me the red apple" to robotic action.
+    -   **The Pipeline**: A breakdown of the data flow:
+        1.  **Voice Input**: Capturing audio.
+        2.  **Speech-to-Text**: Converting audio to a text prompt.
+        3.  **LLM Planning**: Sending the prompt to an LLM to generate a structured plan.
+        4.  **ROS 2 Orchestration**: Parsing the plan and executing ROS 2 actions/services.
+        5.  **Perception & Action**: Using the systems from Module 3 (Nav2, Isaac ROS) to perform the tasks.
+-   **Diagrams**: A detailed, top-to-bottom architectural diagram illustrating every component and the ROS 2 topics/actions connecting them. This is the master blueprint for the module.
 
--   **I. Accurate, Structured, and High-Quality Educational Content**: The feature focuses on a "minimal, simple authentication module suitable for beginners", which directly supports the creation of educational content.
--   **II. Docusaurus Optimization**: While the feature itself is a backend component, its documentation (e.g., `README.md`) will be optimized for Docusaurus as part of the overall project, ensuring seamless integration into the textbook.
--   **III. Modularity, Scalability, and Reusability**: Designed as a standalone authentication module, promoting modularity and reusability within or across projects. Simplicity (no advanced features) keeps it focused and reusable as a core example.
--   **IV. Clarity, Correctness, and Explainability**: The requirement for a "minimal, simple" module for beginners inherently demands clarity and explainability in its implementation and documentation.
--   **V. Safety**: Explicitly addressed by Non-Functional Requirements (NFR-001, NFR-002, NFR-003) regarding password hashing, environment variables for secrets, and generic error messages.
+### Section 2: From Voice to Text
 
-## Project Structure
+-   **Objective**: Implement the first stage of the pipeline: converting a spoken command into a usable text string.
+-   **Key Topics**:
+    -   Setting up a Python environment to capture microphone input.
+    -   Using an open-source speech-to-text system (e.g., a local Whisper model) to transcribe the audio.
+    -   Creating a simple ROS 2 node that captures audio, transcribes it, and publishes the resulting text string to a `/user_command` topic.
 
-### Documentation (this feature)
+### Section 3: The LLM as a Cognitive Planner
 
-```text
-specs/[###-feature]/
-├── plan.md              # This file (/sp.plan command output)
-├── research.md          # Phase 0 output (/sp.plan command)
-├── data-model.md        # Phase 1 output (/sp.plan command)
-├── quickstart.md        # Phase 1 output (/sp.plan command)
-├── contracts/           # Phase 1 output (/sp.plan command)
-└── tasks.md             # Phase 2 output (/sp.tasks command - NOT created by /sp.plan)
-```
+-   **Objective**: Teach the reader how to prompt an LLM to think like a robot and generate structured, machine-readable plans.
+-   **Key Topics**:
+    -   **Prompt Engineering for Robotics**: How to write a "system prompt" that defines the robot's capabilities (its available ROS 2 actions/services), its current state, and the desired output format (e.g., JSON).
+    -   **Grounding the LLM**: Providing the LLM with a "world model" or context so its plans are relevant to the robot's environment and abilities.
+    -   **Creating the Planner Node**: A ROS 2 node that subscribes to the `/user_command` topic, sends the text to an LLM API, and receives the structured plan.
+-   **Example**: Show a full prompt and the corresponding structured JSON output for a command like "Get the soda can."
+    ```json
+    {
+      "plan": [
+        {"action": "navigate_to", "parameters": {"destination": "kitchen"}},
+        {"action": "find_object", "parameters": {"object_name": "soda_can"}},
+        {"action": "pick_up", "parameters": {"object_id": "result_of_step_2"}}
+      ]
+    }
+    ```
 
-### Source Code (repository root)
+### Section 4: The ROS 2 Orchestrator
 
-```text
-backend/
-├── prisma/
-│   └── schema.prisma
-├── src/
-│   ├── app.ts
-│   ├── server.ts
-│   ├── routes/
-│   │   └── auth.routes.ts
-│   ├── controllers/
-│   │   └── auth.controller.ts
-│   ├── services/
-│   │   └── auth.service.ts
-│   └── utils/
-│       ├── hash.ts
-│       └── jwt.ts
-└── tests/
-    ├── contract/
-    ├── integration/
-    └── unit/
-```
+-   **Objective**: Create the central node that translates the LLM's plan into actual robot behavior.
+-   **Key Topics**:
+    -   **The Orchestrator Node**: A Python-based ROS 2 node that subscribes to the LLM's plan topic.
+    -   **Parsing and Execution Loop**: The node will parse the JSON plan and execute each step sequentially.
+    -   **Calling ROS 2 Actions**: The orchestrator will act as an action client, for example, to the Nav2 action server to execute `navigate_to` goals.
+    -   **State Management**: The orchestrator must wait for one action to complete successfully before starting the next.
+-   **Integration**: This section explicitly connects to the Nav2 and Isaac ROS perception pipelines built in Module 3.
 
-**Structure Decision**: Selected and adapted a single project structure for the backend, focusing on modularity and clear separation of concerns as indicated by the feature specification.
+### Section 5: Assembling and Running the Full System
+
+-   **Objective**: Guide the reader through launching and testing the complete end-to-end system.
+-   **Key Topics**:
+    -   **The Master Launch File**: Creating a top-level ROS 2 launch file that starts:
+        -   Isaac Sim with the humanoid and environment.
+        -   All required Isaac ROS perception and SLAM nodes (from Module 3).
+        -   The Nav2 stack (from Module 3).
+        -   The new VLA nodes: Speech-to-Text, LLM Planner, and Orchestrator.
+    -   **Running a Full Scenario**: A step-by-step tutorial of the capstone project:
+        1.  Launch the system.
+        2.  Speak the command.
+        3.  Observe the robot performing the navigation and perception tasks.
+    -   **Debugging and Visualization**: Using tools like RViz2 and `ros2 topic echo` to inspect each stage of the pipeline.
+
+## 3. Risk Analysis
+
+-   **Risk**: Access to powerful LLMs can be rate-limited or require payment.
+    -   **Mitigation**: Base the examples on a locally runnable open-source model (e.g., a quantized Llama or Mistral model) to remove external dependencies. Provide clear instructions on setting up the local LLM server.
+-   **Risk**: The complexity of the fully integrated system is high, making debugging difficult.
+    -   **Mitigation**: Structure each section so it can be tested independently. For example, allow the user to send a text command directly to the LLM planner, bypassing the voice input, to test that stage in isolation. Emphasize logging and clear status messages from the Orchestrator node.
+
+## 4. Definition of Done
+
+The plan is considered complete when:
+-   All sections align with the capstone project goals in `spec.md`.
+-   The plan provides a clear, step-by-step path for assembling the final system.
+-   The integration points between all four modules are explicitly defined.
+-   The plan has been reviewed and approved.
