@@ -1,164 +1,70 @@
-# Tasks: Sensors and Perception in Humanoid Robots
+# Implementation Tasks: Module 2 - The Digital Twin (Gazebo & Unity)
 
-**Input**: Design documents from `/specs/002-humanoid-perception/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Feature**: `002-the-digital-twin`
+**Status**: To Do
 
-**Tests**: Test tasks are not explicitly requested in the feature specification and will not be generated. However, independent test criteria are provided for each user story.
+This document lists the implementation tasks for creating the content of Module 2, derived from the `spec.md` and `plan.md`. Tasks are designed to be achievable by a motivated learner and map directly to the learning plan.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+## Task Format
 
-## Format: `[ID] [P?] [Story] Description`
+-   **ID**: A unique identifier for the task (e.g., T1.1).
+-   **Section**: Maps to the corresponding section in `plan.md`.
+-   **Type**: `Conceptual` or `Hands-on`.
+-   **Description**: A clear, actionable description of the task.
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+---
 
-## Path Conventions
+### Section 1: Foundations of Robotics Simulation
 
-- **Single project**: `my-textbook-site/` (Docusaurus project)
-- Paths shown below assume single project - adjust based on plan.md structure
+| ID   | Section | Type       | Description                                                                                                                              |
+| :--- | :------ | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| T1.1 | 1       | Conceptual | Write the introductory chapter on the Digital Twin concept in robotics, emphasizing benefits like safety, speed, and cost-effectiveness.   |
+| T1.2 | 1       | Conceptual | Create a chapter comparing Gazebo and Unity, establishing their primary roles (Gazebo for physics, Unity for rendering/HRI).                |
+| T1.3 | 1       | Conceptual | Draft a guide to the SDF file format, explaining its structure and how it extends URDF for simulation-specific properties.               |
+| T1.4 | 1       | Hands-on   | Create a tutorial for installing Gazebo and the necessary ROS 2 integration packages (e.g., `ros_gz_bridge`).                           |
 
-## Phase 1: Setup (Shared Infrastructure)
+---
 
-**Purpose**: Project initialization and basic structure for interactive elements
+### Section 2: Physics-Based Simulation with Gazebo
 
-- [x] T001 Configure Docusaurus for Module 3 content and interactive components in my-textbook-site/docusaurus.config.ts
-- [x] T002 Update sidebar navigation for Module 3 in my-textbook-site/sidebars.ts
-- [x] T003 [P] Install necessary visualization libraries: three.js, @react-three/fiber, @react-three/drei, chart.js (or recharts) in my-textbook-site/package.json
-- [x] T004 [P] Install OpenCV.js (if used for 2D image processing demos) in my-textbook-site/package.json
+| ID   | Section | Type       | Description                                                                                                                              |
+| :--- | :------ | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| T2.1 | 2       | Hands-on   | Write a tutorial on creating a basic Gazebo world file, including ground plane, lighting, and simple static shapes.                        |
+| T2.2 | 2       | Hands-on   | Develop a step-by-step guide to import an existing humanoid URDF model and spawn it in the Gazebo world.                                     |
+| T2.3 | 2       | Conceptual | Explain how to configure physics properties in SDF, including `<gravity>`, `<friction>`, and `<contact>` elements for realistic simulation. |
+| T2.4 | 2       | Hands-on   | Demonstrate how to use the `ros_gz_bridge` to relay joint state messages from Gazebo to a ROS 2 topic that can be echoed.                 |
+| T2.5 | 2       | Hands-on   | Create an exercise where the learner applies forces to the simulated humanoid (e.g., a push) and observes the effect on its stability.      |
 
-## Phase 2: Foundational (Blocking Prerequisites)
+---
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
+### Section 3: Simulating the Senses
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
+| ID   | Section | Type       | Description                                                                                                                              |
+| :--- | :------ | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| T3.1 | 3       | Hands-on   | Write a tutorial on adding a simulated RGB camera to the humanoid's URDF/SDF, configuring its resolution, frame rate, and lens properties. |
+| T3.2 | 3       | Hands-on   | Add a simulated depth camera sensor and demonstrate how to visualize its point cloud output in RViz2 via a ROS 2 topic.                    |
+| T3.3 | 3       | Hands-on   | Add a simulated IMU sensor to the humanoid's torso link and publish its orientation and acceleration data to a ROS 2 topic.                |
+| T3.4 | 3       | Hands-on   | Add a simulated LiDAR sensor and show how to configure its scan parameters (range, resolution, samples) and visualize the output.          |
+| T3.5 | 3       | Conceptual | Explain how to add noise models (e.g., Gaussian noise) to the simulated sensors to better mimic real-world imperfections.                 |
 
-- [x] T005 Implement core data structures for Sensor, Sensor Data, Perception Algorithm, Environmental Map, Feature in my-textbook-site/src/lib/perception-model.ts
-- [x] T006 Develop utility functions for common sensor data processing (e.g., basic filtering, noise generation) in my-textbook-site/src/lib/sensor-utils.ts
-- [x] T007 Create a base interactive component for sensor data visualization in my-textbook-site/src/components/SensorDataViewer.tsx
+---
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+### Section 4: High-Fidelity Visualization with Unity
 
-## Phase 3: User Story 1 - Student Learns About Different Sensor Types (Priority: P1) 🎯 MVP
+| ID   | Section | Type       | Description                                                                                                                              |
+| :--- | :------ | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| T4.1 | 4       | Hands-on   | Create a tutorial for setting up a Unity project with the ROS-TCP-Connector for communication with a ROS 2 network.                          |
+| T4.2 | 4       | Hands-on   | Write a guide on importing the humanoid robot model into Unity and setting up realistic materials, textures, and lighting for high-fidelity rendering. |
+| T4.3 | 4       | Hands-on   | Develop a Unity script that subscribes to ROS 2 joint state topics and updates the robot model's articulation in real-time.               |
+| T4.4 | 4       | Hands-on   | Create a simple UI in Unity (e.g., buttons) that publishes a message to a ROS 2 topic, allowing the user to trigger a behavior in the robot. |
 
-**Goal**: A student wants to identify and understand the working principles, advantages, and limitations of various proprioceptive and exteroceptive sensors used in humanoid robots. They interact with visual aids and comparative analyses.
+---
 
-**Independent Test**: The student can correctly classify common humanoid robot sensors, describe their basic operation, and list at least two pros and cons for each type.
+### Section 5: Bridging the Reality Gap (Sim-to-Real)
 
-### Implementation for User Story 1
-
-- [x] T008 [P] [US1] Create a React component to visualize various sensor types and their characteristics in my-textbook-site/src/components/SensorTypesDemo.tsx
-- [x] T009 [P] [US1] Implement interactive elements (e.g., toggles) to compare sensor advantages/limitations in my-textbook-site/src/components/SensorTypesDemo.tsx
-- [x] T010 [US1] Create MDX content for "Sensor Types" chapter, embedding the interactive demo in my-textbook-site/docs/module3/sensor-types.mdx
-
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
-
-## Phase 4: User Story 2 - Student Understands Basic Localization (Priority: P1)
-
-**Goal**: A student wants to grasp the core concepts of robot localization, particularly how sensor data is used to estimate the robot's position and orientation within an environment. They interact with simplified simulation examples.
-
-**Independent Test**: The student can describe the high-level process of a basic localization algorithm (e.g., dead reckoning with odometry, or simple landmark-based localization) and explain the role of sensor data (e.g., encoder counts, camera images) in it.
-
-### Implementation for User Story 2
-
-- [x] T011 [P] [US2] Develop a simplified localization algorithm service (e.g., 2D odometry-based) in my-textbook-site/src/services/localization-service.ts
-- [x] T012 [P] [US2] Create a React component to visualize a robot in a 2D environment with simulated sensor data in my-textbook-site/src/components/LocalizationDemo.tsx
-- [x] T013 [P] [US2] Implement UI controls to simulate robot movement and sensor readings in my-textbook-site/src/components/LocalizationDemo.tsx
-- [x] T014 [US2] Integrate localization service with 2D visualization in my-textbook-site/src/components/LocalizationDemo.tsx
-- [x] T015 [US2] Create MDX content for "Basic Localization" chapter, embedding the interactive demo in my-textbook-site/docs/module3/basic-localization.mdx
-
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
-
-## Phase 5: User Story 3 - Instructor Reviews Module Content (Priority: P2)
-
-**Goal**: An instructor wants to review the comprehensive module content, including learning objectives, key concepts, chapter structure, and assessment criteria, to ensure alignment with curriculum goals and accuracy.
-
-**Independent Test**: The instructor can navigate through all sections of the module specification and confirm that all required components are present, logically organized, and scientifically accurate.
-
-### Implementation for User Story 3
-
-- [x] T016 [US3] Ensure all Module 3 content (`.mdx` files) is correctly rendered by Docusaurus in my-textbook-site/docusaurus.config.ts
-- [x] T017 [US3] Verify that navigation and table of contents are correctly configured for Module 3 in my-textbook-site/sidebars.ts
-- [x] T018 [US3] Implement basic accessibility checks for interactive components in my-textbook-site/src/components/
-- [x] T019 [US3] Conduct a manual review of all content and interactive elements for clarity and correctness.
-
-**Checkpoint**: All user stories should now be independently functional
-
-## Phase 6: Polish & Cross-Cutting Concerns
-
-**Purpose**: Improvements that affect multiple user stories
-
-- [x] T020 Implement robust error handling for interactive components (e.g., invalid sensor data, algorithm failures) in my-textbook-site/src/components/
-- [x] T021 Optimize performance for sensor data visualizations and simulations in my-textbook-site/src/components/
-- [x] T022 Ensure mobile responsiveness for all interactive elements in my-textbook-site/src/components/
-- [x] T023 Add comprehensive documentation for all new interactive components and services in their respective files.
-- [x] T024 Review and refine overall chapter structure and flow within my-textbook-site/docs/module3/
-
-## Dependencies & Execution Order
-
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories.
-- **User Story 3 (P2)**: Can start after Foundational (Phase 2) - Depends on US1 and US2 being substantially complete for effective review.
-
-### Within Each User Story
-
-- Core implementation before integration
-- Story complete before moving to next priority
-
-### Parallel Opportunities
-
-- Tasks T003, T004 (Setup) can run in parallel.
-- Tasks T008, T009 (US1) can be developed in parallel.
-- Tasks T011, T012, T013 (US2) can be developed in parallel.
-- Once Foundational phase completes, User Story 1 and User Story 2 can be worked on in parallel by different team members.
-- Tasks within the Polish phase can often be parallelized.
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1.  Complete Phase 1: Setup
-2.  Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3.  Complete Phase 3: User Story 1
-4.  **STOP and VALIDATE**: Test User Story 1 independently
-5.  Deploy/demo if ready
-
-### Incremental Delivery
-
-1.  Complete Setup + Foundational → Foundation ready
-2.  Add User Story 1 → Test independently → Deploy/Demo (MVP!)
-3.  Add User Story 2 → Test independently → Deploy/Demo
-4.  Add User Story 3 → Test independently → Deploy/Demo
-5.  Each story adds value without breaking previous stories
-
-### Parallel Team Strategy
-
-With multiple developers:
-
-1.  Team completes Setup + Foundational together
-2.  Once Foundational is done:
-    *   Developer A: User Story 1
-    *   Developer B: User Story 2
-    *   Developer C: User Story 3
-3.  Stories complete and integrate independently
-
-## Notes
-
--   [P] tasks = different files, no dependencies
--   [Story] label maps task to specific user story for traceability
--   Each user story should be independently completable and testable
--   Verify tests fail before implementing
--   Commit after each task or logical group
--   Stop at any checkpoint to validate story independently
--   Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+| ID   | Section | Type       | Description                                                                                                                              |
+| :--- | :------ | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| T5.1 | 5       | Conceptual | Write a chapter defining the "reality gap" and provide clear examples of how simulated physics and sensors can differ from reality.        |
+| T5.2 | 5       | Conceptual | Explain the concept of System Identification and how it can be used to measure real-world robot parameters to improve simulation accuracy. |
+| T5.3 | 5       | Conceptual | Explain the concept of Domain Randomization, detailing how varying simulation parameters can help train more robust control policies.      |
+| T5.4 | 5       | Conceptual | Create a case study discussing the specific sim-to-real challenges for humanoid walking and how they might be addressed.                   |
