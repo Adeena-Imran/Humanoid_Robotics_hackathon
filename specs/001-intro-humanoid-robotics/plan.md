@@ -1,73 +1,80 @@
-# Implementation Plan: Module 1: Introduction to Humanoid Robotics
+# Learning Plan: Module 1 - The Robotic Nervous System (ROS 2)
 
-**Branch**: `001-intro-humanoid-robotics` | **Date**: 2025-12-06 | **Spec**: [spec.md](spec.md)
-**Input**: Feature specification from `specs/001-intro-humanoid-robotics/spec.md`
+**Feature**: `001-the-robotic-nervous-system`
+**Status**: Draft
 
-**Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+This plan outlines the learning progression for Module 1, which introduces ROS 2 as the foundational runtime layer for humanoid robots. The structure is designed to build a strong conceptual understanding before moving to practical, hands-on development.
 
-## Summary
+## 1. Architectural Vision
 
-This plan outlines the generation of the first module of a humanoid robotics textbook, "Introduction to Humanoid Robotics". The technical approach involves using a multi-agent pipeline (RAG, personalization, and writer agents) to generate Docusaurus-compatible MDX content as specified in the feature specification.
+The primary goal of this module is to equip the reader with the knowledge and skills to use ROS 2 for robot control and communication. By the end of this module, the reader will be able to understand the ROS 2 architecture, develop Python-based AI agents that interface with ROS controllers, and describe a humanoid robot's structure using URDF. This plan serves as the bridge between the high-level requirements in `spec.md` and the granular, implementable `tasks.md`.
 
-## Technical Context
+## 2. Progressive Learning Sections
 
-**Language/Version**: PowerShell (for scripts), MDX (for content)
-**Primary Dependencies**: Docusaurus (latest stable version)
-**Storage**: Git repository (for .mdx files)
-**Testing**: Manual review, validation against constitution, and SME review.
-**Target Platform**: Web (via Docusaurus)
-**Project Type**: Documentation/Content
-**Performance Goals**: N/A
-**Constraints**: All output must be Docusaurus-compatible MDX.
-**Scale/Scope**: A full textbook with multiple modules.
+The module will be divided into the following sections, ensuring a logical flow from theory to practice.
 
-## Constitution Check
+### Section 1: Introduction to ROS 2 - The "What" and "Why"
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+- **Objective**: Establish the role of ROS 2 as a middleware for robotics.
+- **Key Topics**:
+    - What is a robotics middleware? Why is it necessary?
+    - A brief history: From ROS 1 to ROS 2.
+    - The ROS 2 ecosystem: Core components and command-line tools.
+- **Humanoid Context**: Frame ROS 2 as the "nervous system" that enables communication between a humanoid's various components (sensors, actuators, "brain").
+- **ADR Link**: (Optional) Link to an ADR on why ROS 2 was chosen as the primary middleware for this book.
 
-- **Gate 1 (Accurate Content)**: Does the plan ensure content is technically accurate and well-structured?
-- **Gate 2 (Docusaurus Optimization)**: Is the output planned as Docusaurus-compatible MDX?
-- **Gate 3 (Modularity)**: Does the plan support modular and reusable content generation?
-- **Gate 4 (Clarity & Correctness)**: Does the plan have steps for ensuring clarity and correctness (e.g., SME review)?
+### Section 2: Core ROS 2 Communication Concepts
 
-## Project Structure
+- **Objective**: Deep dive into the ROS 2 communication model.
+- **Key Topics**:
+    - **Nodes**: The building blocks of a ROS 2 application.
+    - **Topics**: For continuous data streams (e.g., sensor data).
+    - **Services**: For request/response interactions (e.g., triggering a calculation).
+    - **Actions**: For long-running, feedback-driven tasks (e.g., "walk to the kitchen").
+    - **QoS (Quality of Service)**: A brief, practical introduction to reliability and durability settings.
+- **Diagrams**: Include diagrams illustrating the publish-subscribe, service, and action patterns.
+- **Humanoid Context**: Provide examples for each communication type using a humanoid robot scenario (e.g., a "joint_states" topic, a "grab_object" action).
 
-### Documentation (this feature)
+### Section 3: Practical ROS 2 with `rclpy`
 
-```text
-specs/001-intro-humanoid-robotics/
-├── plan.md              # This file (/sp.plan command output)
-├── research.md          # Phase 0 output (/sp.plan command)
-├── data-model.md        # Phase 1 output (/sp.plan command)
-├── quickstart.md        # Phase 1 output (/sp.plan command)
-└── tasks.md             # Phase 2 output (/sp.tasks command - NOT created by /sp.plan)
-```
+- **Objective**: Transition from theory to hands-on coding.
+- **Key Topics**:
+    - Setting up a ROS 2 workspace.
+    - Creating a simple "Hello, World" ROS 2 package in Python.
+    - Writing a publisher and subscriber node using `rclpy`.
+    - Implementing a service client and server.
+    - Implementing an action client and server.
+- **Code Examples**: Provide clear, well-commented Python code snippets for each concept.
+- **Humanoid Context**: Bridge the gap between AI agents and robotics by showing how a Python script can send commands (e.g., `Twist` messages) to a robot controller.
 
-### Source Code (repository root)
+### Section 4: Describing Robots with URDF
 
-This project is a content generation pipeline. The "source code" consists of the agents and skills that generate the textbook content.
+- **Objective**: Introduce the standard for modeling a robot's physical structure.
+- **Key Topics**:
+    - What is URDF? The XML-based structure.
+    - **Links**: Defining the physical components (e.g., torso, upper_arm, forearm).
+    - **Joints**: Defining the relationship and motion between links (e.g., revolute, prismatic, fixed).
+    - Visual and Collision properties.
+- **Diagrams**: Show a simple robot arm and its corresponding URDF tree structure.
+- **Humanoid Context**: Walk through a simplified URDF for a humanoid robot, explaining how the limbs are connected and what the degrees of freedom represent.
 
-```text
-.gemini/
-└── commands/
-    └── agents/
-        ├── book_writer_agent.md
-        ├── personalization_agent.md
-        └── rag_content_agent.md
-skills/
-├── generate_chapter_skill.md
-└── prepare_chunks_for_rag_skill.md
-docs/
-└── module-1.mdx  # Example final output
-```
+## 3. Non-Functional Requirements
 
-**Structure Decision**: The project follows a content-as-code structure. The agents and skills define the generation pipeline, and the `docs` directory will store the final MDX output.
+- **Clarity and Simplicity**: All explanations must be clear and aimed at a reader with basic Python knowledge but no assumed robotics expertise.
+- **Docusaurus Compatibility**: All content will use standard Markdown suitable for Docusaurus. Code blocks will be appropriately tagged with the language (e.g., `python`, `xml`).
+- **Consistency**: The tone, style, and terminology must be consistent with the rest of the book and the `spec.md`.
 
-## Complexity Tracking
+## 4. Risk Analysis
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+- **Risk**: The reader gets lost in ROS 2 installation and setup.
+  - **Mitigation**: Provide clear, step-by-step installation instructions and link to official ROS 2 documentation. Offer a pre-configured Docker image or Dev Container as an alternative.
+- **Risk**: URDF can be complex and dry.
+  - **Mitigation**: Focus on a simple, intuitive example first. Use visualization tools like RViz2 to show the robot model rendered from the URDF file, making the connection between code and physical representation tangible.
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+## 5. Definition of Done
+
+The plan is considered complete when:
+- All sections align with the learning outcomes in `spec.md`.
+- Each section has a clear objective and defined key topics.
+- The plan provides a clear path for creating the detailed implementation tasks in `tasks.md`.
+- The plan has been reviewed and approved.
