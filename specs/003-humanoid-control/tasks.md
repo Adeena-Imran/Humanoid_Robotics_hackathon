@@ -1,165 +1,70 @@
-# Tasks: Actuation and Control Systems in Humanoid Robots
+# Implementation Tasks: Module 3 - The AI-Robot Brain (NVIDIA Isaac™)
 
-**Input**: Design documents from `/specs/003-humanoid-control/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Feature**: `003-the-ai-robot-brain`
+**Status**: To Do
 
-**Tests**: Test tasks are not explicitly requested in the feature specification and will not be generated. However, independent test criteria are provided for each user story.
+This document lists the implementation tasks for creating the content of Module 3, derived from the `spec.md` and `plan.md`. Tasks are designed to be achievable by a motivated learner with a suitable hardware setup (NVIDIA RTX GPU) and map directly to the learning plan.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+## Task Format
 
-## Format: `[ID] [P?] [Story] Description`
+-   **ID**: A unique identifier for the task (e.g., T1.1).
+-   **Section**: Maps to the corresponding section in `plan.md`.
+-   **Type**: `Conceptual`, `Configuration`, or `Hands-on`.
+-   **Description**: A clear, actionable description of the task.
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+---
 
-## Path Conventions
+### Section 1: The NVIDIA Isaac Ecosystem for AI Robotics
 
-- **Single project**: `my-textbook-site/` (Docusaurus project)
-- Paths shown below assume single project - adjust based on plan.md structure
+| ID   | Section | Type          | Description                                                                                                                                     |
+| :--- | :------ | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| T1.1 | 1       | Conceptual    | Write the introductory chapter explaining the role of the Isaac platform as the "brain" for the robot, building on ROS 2 and simulation knowledge. |
+| T1.2 | 1       | Conceptual    | Create a chapter detailing the Isaac Sim and Isaac ROS components and how they fit into the "Sim-to-Real" workflow.                               |
+| T1.3 | 1       | Conceptual    | Produce a high-level architectural diagram showing the data flow between Isaac Sim, Isaac ROS, and standard ROS 2 nodes.                          |
+| T1.4 | 1       | Configuration | Provide a detailed guide for installing Isaac Sim and the required Isaac ROS packages, including hardware requirement checks.                     |
 
-## Phase 1: Setup (Shared Infrastructure)
+---
 
-**Purpose**: Project initialization and basic structure for interactive elements
+### Section 2: Synthetic Data Generation and Perception Model Training
 
-- [x] T001 Configure Docusaurus for Module 4 content and interactive components in my-textbook-site/docusaurus.config.ts
-- [x] T002 Update sidebar navigation for Module 4 in my-textbook-site/sidebars.ts
-- [x] T003 [P] Install necessary simulation and visualization libraries: three.js, @react-three/fiber, @react-three/drei, chart.js (or recharts), p2.js (or matter.js if chosen) in my-textbook-site/package.json
-- [x] T004 [P] (Optional) Configure Web Workers if complex client-side simulations are expected in my-textbook-site/src/utils/web-worker-config.ts
+| ID   | Section | Type          | Description                                                                                                                                     |
+| :--- | :------ | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| T2.1 | 2       | Hands-on      | Write a tutorial on building a photorealistic indoor scene in Isaac Sim, including importing assets, setting materials, and lighting.              |
+| T2.2 | 2       | Hands-on      | Create a guide for implementing Domain Randomization in Isaac Sim, scripting the automatic variation of textures, lighting, and object poses.   |
+| T2.3 | 2       | Hands-on      | Develop a tutorial on using Isaac Sim's synthetic data recorder to generate a labeled dataset (bounding boxes) for a common household object.     |
+| T2.4 | 2       | Hands-on      | Provide an example workflow for using the generated dataset to fine-tune a pre-trained object detection model (e.g., using NVIDIA TAO).          |
 
-## Phase 2: Foundational (Blocking Prerequisites)
+---
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
+### Section 3: Hardware-Accelerated Perception with Isaac ROS
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
+| ID   | Section | Type          | Description                                                                                                                                     |
+| :--- | :------ | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| T3.1 | 3       | Conceptual    | Write a chapter explaining the concept of GPU acceleration in ROS 2 and the role of Isaac ROS NITROS for high-performance pipelines.            |
+| T3.2 | 3       | Configuration | Provide a ROS 2 launch file and configuration for the `isaac_ros_detectnet` node to load and run the custom-trained object detection model.      |
+| T3.3 | 3       | Hands-on      | Create an exercise where the learner runs the accelerated object detection pipeline on a simulated camera feed from Isaac Sim.                    |
+| T3.4 | 3       | Hands-on      | Write a guide on using ROS 2 tools to measure and compare the performance (latency, throughput) of the GPU-accelerated node vs. a CPU equivalent. |
 
-- [x] T005 Implement core data structures for Actuator, Controller, Control Loop, and extend Trajectory in my-textbook-site/src/lib/control-model.ts
-- [x] T006 Develop utility functions for basic physics simulation (e.g., integration, forces) in my-textbook-site/src/lib/physics-utils.ts
-- [x] T007 Create a base interactive component for displaying control system responses (e.g., plots) in my-textbook-site/src/components/ControlSystemViewer.tsx
+---
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+### Section 4: Visual SLAM for Humanoid Localization
 
-## Phase 3: User Story 1 - Student Learns About Different Actuator Types (Priority: P1) 🎯 MVP
+| ID   | Section | Type          | Description                                                                                                                                     |
+| :--- | :------ | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| T4.1 | 4       | Conceptual    | Write a chapter explaining the fundamental principles of Visual SLAM and its importance for humanoid robots operating in unknown environments.    |
+| T4.2 | 4       | Configuration | Provide a complete launch file and parameter configuration for the `isaac_ros_visual_slam` node, optimized for a humanoid's camera setup.         |
+| T4.3 | 4       | Hands-on      | Develop a tutorial where the learner teleoperates the humanoid robot through the Isaac Sim scene to map it using the VSLAM pipeline.              |
+| T4.4 | 4       | Hands-on      | Create a guide for visualizing the VSLAM output (map, camera trajectory, features) in RViz2 and explain how to interpret the results.             |
+| T4.5 | 4       | Conceptual    | Discuss common failure modes of VSLAM on humanoids (e.g., fast rotations, motion blur) and link them to specific tuning parameters.               |
 
-**Goal**: A student wants to identify and understand the working principles, advantages, and limitations of various actuators used in humanoid robots. They interact with visual aids and comparative analyses.
+---
 
-**Independent Test**: The student can correctly classify common humanoid robot actuators, describe their basic operation, and list at least two pros and cons for each type.
+### Section 5: Bipedal Navigation with Nav2
 
-### Implementation for User Story 1
-
-- [x] T008 [P] [US1] Create a React component to visualize various actuator types and their characteristics in my-textbook-site/src/components/ActuatorTypesDemo.tsx
-- [x] T009 [P] [US1] Implement interactive elements (e.g., sliders) to demonstrate actuator behavior (e.g., torque-speed curves) in my-textbook-site/src/components/ActuatorTypesDemo.tsx
-- [x] T010 [US1] Create MDX content for "Actuator Types" chapter, embedding the interactive demo in my-textbook-site/docs/module4/actuator-types.mdx
-
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
-
-## Phase 4: User Story 2 - Student Understands PID Control (Priority: P1)
-
-**Goal**: A student wants to grasp the core concepts of PID (Proportional-Integral-Derivative) control, including how to tune parameters to achieve desired system responses. They interact with a simplified simulation of a controlled system.
-
-**Independent Test**: The student can explain the role of P, I, and D gains, and demonstrate (via simulation) how adjusting these gains affects system response (e.g., overshoot, settling time, steady-state error).
-
-### Implementation for User Story 2
-
-- [x] T011 [P] [US2] Develop a simplified PID controller implementation service in my-textbook-site/src/services/pid-controller.ts
-- [x] T012 [P] [US2] Create a React component for a simulated single-joint system (e.g., pendulum) with a PID controller in my-textbook-site/src/components/PIDControlDemo.tsx
-- [x] T013 [P] [US2] Implement UI controls for tuning PID gains (Kp, Ki, Kd) in my-textbook-site/src/components/PIDControlDemo.tsx
-- [x] T014 [US2] Integrate PID controller service with simulated system and visualization in my-textbook-site/src/components/PIDControlDemo.tsx
-- [x] T015 [US2] Visualize system response (e.g., position over time, error) using charting in my-textbook-site/src/components/PIDControlDemo.tsx
-- [x] T016 [US2] Create MDX content for "PID Control" chapter, embedding the interactive demo in my-textbook-site/docs/module4/pid-control.mdx
-
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
-
-## Phase 5: User Story 3 - Instructor Reviews Module Content (Priority: P2)
-
-**Goal**: An instructor wants to review the comprehensive module content, including learning objectives, key concepts, chapter structure, and assessment criteria, to ensure alignment with curriculum goals and accuracy.
-
-**Independent Test**: The instructor can navigate through all sections of the module specification and confirm that all required components are present, logically organized, and scientifically accurate.
-
-### Implementation for User Story 3
-
-- [x] T017 [US3] Ensure all Module 4 content (`.mdx` files) is correctly rendered by Docusaurus in my-textbook-site/docusaurus.config.ts
-- [x] T018 [US3] Verify that navigation and table of contents are correctly configured for Module 4 in my-textbook-site/sidebars.ts
-- [x] T019 [US3] Implement basic accessibility checks for interactive components in my-textbook-site/src/components/
-- [x] T020 [US3] Conduct a manual review of all content and interactive elements for clarity and correctness.
-
-**Checkpoint**: All user stories should now be independently functional
-
-## Phase 6: Polish & Cross-Cutting Concerns
-
-**Purpose**: Improvements that affect multiple user stories
-
-- [x] T021 Implement robust error handling for interactive components (e.g., simulation failures, invalid parameters) in my-textbook-site/src/components/
-- [x] T022 Optimize performance for control simulations and visualizations in my-textbook-site/src/components/
-- [x] T023 Ensure mobile responsiveness for all interactive elements in my-textbook-site/src/components/
-- [x] T024 Add comprehensive documentation for all new interactive components and services in their respective files.
-- [x] T025 Review and refine overall chapter structure and flow within my-textbook-site/docs/module4/
-
-## Dependencies & Execution Order
-
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories.
-- **User Story 3 (P2)**: Can start after Foundational (Phase 2) - Depends on US1 and US2 being substantially complete for effective review.
-
-### Within Each User Story
-
-- Core implementation before integration
-- Story complete before moving to next priority
-
-### Parallel Opportunities
-
-- Tasks T003, T004 (Setup) can run in parallel.
-- Tasks T008, T009 (US1) can be developed in parallel.
-- Tasks T011, T012, T013 (US2) can be developed in parallel.
-- Once Foundational phase completes, User Story 1 and User Story 2 can be worked on in parallel by different team members.
-- Tasks within the Polish phase can often be parallelized.
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1.  Complete Phase 1: Setup
-2.  Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3.  Complete Phase 3: User Story 1
-4.  **STOP and VALIDATE**: Test User Story 1 independently
-5.  Deploy/demo if ready
-
-### Incremental Delivery
-
-1.  Complete Setup + Foundational → Foundation ready
-2.  Add User Story 1 → Test independently → Deploy/Demo (MVP!)
-3.  Add User Story 2 → Test independently → Deploy/Demo
-4.  Add User Story 3 → Test independently → Deploy/Demo
-5.  Each story adds value without breaking previous stories
-
-### Parallel Team Strategy
-
-With multiple developers:
-
-1.  Team completes Setup + Foundational together
-2.  Once Foundational is done:
-    *   Developer A: User Story 1
-    *   Developer B: User Story 2
-    *   Developer C: User Story 3
-3.  Stories complete and integrate independently
-
-## Notes
-
--   [P] tasks = different files, no dependencies
--   [Story] label maps task to specific user story for traceability
--   Each user story should be independently completable and testable
--   Verify tests fail before implementing
--   Commit after each task or logical group
--   Stop at any checkpoint to validate story independently
--   Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+| ID   | Section | Type          | Description                                                                                                                                     |
+| :--- | :------ | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| T5.1 | 5       | Conceptual    | Write an overview of the Nav2 stack, highlighting the key components (planners, controller, costmaps, behavior trees).                          |
+| T5.2 | 5       | Conceptual    | Create a chapter explaining why Nav2's default controller must be replaced for a bipedal robot and how it interfaces with a gait controller.    |
+| T5.3 | 5       | Configuration | Provide an example Nav2 configuration (`nav2_params.yaml`) for a humanoid, using the map from the VSLAM node and setting up appropriate costmaps. |
+| T5.4 | 5       | Hands-on      | Write a tutorial on sending a navigation goal to the Nav2 stack and visualizing the planned path in RViz2.                                        |
+| T5.5 | 5       | Hands-on      | Create an exercise where the learner must tune the Nav2 planners to generate a safe path through a cluttered environment for the humanoid.        |
