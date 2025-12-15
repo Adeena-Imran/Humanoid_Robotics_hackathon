@@ -2,6 +2,7 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
   tutorialSidebar: [
+    'introduction',
     'intro-humanoid-robotics',      // Module 1
     'module2',
     'module3',
